@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Loan View {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navblock %}
+    {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div>
+        <main>
+            <center>
+                <h3>Loan Details</h3>
+                <div class="container">
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Loan Code</th>
+                                <th>Loan Amount</th>
+                                <th>Total Amount</th>
+                                <th>Started Date</th>
+                                <th>Weekly Payment</th>
+                                <th>Total Payment</th>
+                                <th>Areas Amount</th>
+                                <th>Last Installment</th>
+                                <th>Interest</th>
+                                <th>Period</th>
+                                <th>isComplete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ loan.loanCode }}</td>
+                                <td>{{ loan.loanAmount }}</td>
+                                <td>{{ totalAmount }}</td>
+                                <td>{{ loan.startedDate|date('Y-m-d') }}</td>
+                                <td>{{ weeklyPayment }}</td>
+                                <td>{{ totalPayment }} ({{ totalPaymentDates }})</td>
+                                <td>{{ areasAmount }} ({{ areasAmountDates }})</td>
+                                <td>{{ lastInstallmentAmount }} ({{ lastInstallmentAmountDates }})</td>
+                                <td>{{ loan.interest }}</td>
+                                <td>{{ loan.period }}</td>
+                                <td>{{ loan.isComplete }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <h4>Customer of the Loan {{ loan.loanCode }}</h4>
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>NIC</th>
+                                <th>Address</th>
+                                <th>Mobile</th>
+                                <th>Fixed</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ loan.customer.name }}</td>
+                                <td>{{ loan.customer.nic }}</td>
+                                <td>{{ loan.customer.address }}</td>
+                                <td>{{ loan.customer.mobile }}</td>
+                                <td>{{ loan.customer.fixed }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <h4>Installments of the Loan {{ loan.loanCode }}</h4>
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Installment Amount</th>
+                                <th>Payment Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for installment in loan.installments %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ installment.installmentAmount }}</td>
+                                    <td>{{ installment.paymentDate|date('Y-m-d') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <h4>Witnesses of the Loan {{ loan.loanCode }}</h4>
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Witness Name</th>
+                                <th>NIC</th>
+                                <th>Address</th>
+                                <th>Mobile</th>
+                                <th>Fixed</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for witness in loan.witnesses %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ witness.name }}</td>
+                                    <td>{{ witness.nic }}</td>
+                                    <td>{{ witness.address }}</td>
+                                    <td>{{ witness.mobile }}</td>
+                                    <td>{{ witness.fixed }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </center>
+        </main>
+    </div>
+
+    <script>
+
+    </script>
+
+{% endblock %}

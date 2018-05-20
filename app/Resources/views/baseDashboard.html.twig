@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>{% block title %} Title {% endblock %}</title>
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('css/maruti-style.css') }}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    {% endblock %}
+
+    {% block javascripts %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    {% endblock %}
+
+</head>
+<body>
+
+<div>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href={{ path('dashboard') }}>Micro-Credit</a>
+            </div>
+            {% block navblock %}
+
+            {% endblock %}
+        </div>
+    </nav>
+</div>
+
+{% block breadcrumb %}
+    {% if breadcrumbArray is defined %}
+        <ol class="breadcrumb">
+            {% for item in breadcrumbArray %}
+                <li class="breadcrumb-item"><a style="text-decoration: none"
+                                               href="{% if item[1] %}{{ path(item[1], {'id': item[2]}) }}{% else %}{{ '#' }}{% endif %}">{{ item[0] }}</a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+{% endblock %}
+
+</body>
+</html>

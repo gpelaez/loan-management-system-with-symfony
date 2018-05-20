@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Installment View {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navblock %}
+    {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div>
+        <main>
+            <center>
+                <h3>Installment Details</h3>
+                <div class="container">
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Installment Amount</th>
+                                <th>Payment Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ installment.installmentAmount }}</td>
+                                <td>{{ installment.paymentDate|date('Y-m-d') }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <h4>Loan for the Installment</h4>
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Loan Code</th>
+                                <th>Loan Amount</th>
+                                <th>Interest</th>
+                                <th>Started Date</th>
+                                <th>Period</th>
+                                <th>isComplete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ installment.loan.loanCode }}</td>
+                                <td>{{ installment.loan.loanAmount }}</td>
+                                <td>{{ installment.loan.interest }}</td>
+                                <td>{{ installment.loan.startedDate|date('Y-m-d') }}</td>
+                                <td>{{ installment.loan.period }}</td>
+                                <td>{{ installment.loan.isComplete }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <h4>Customer for the Installment</h4>
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>NIC</th>
+                                <th>Address</th>
+                                <th>Mobile</th>
+                                <th>Fixed</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ installment.loan.customer.name }}</td>
+                                <td>{{ installment.loan.customer.nic }}</td>
+                                <td>{{ installment.loan.customer.address }}</td>
+                                <td>{{ installment.loan.customer.mobile }}</td>
+                                <td>{{ installment.loan.customer.fixed }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </center>
+        </main>
+    </div>
+
+    <script>
+
+    </script>
+
+{% endblock %}

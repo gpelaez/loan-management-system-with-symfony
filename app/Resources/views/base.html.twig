@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>{% block title %} Title {% endblock %}</title>
+
+    {% block stylesheets %}
+        <style>
+            .table {
+                background-color: #EEE;
+            }
+        </style>
+        <link rel="stylesheet" href="{{ asset('css/sidebar-style.css') }}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
+    {% endblock %}
+
+    {% block javascripts %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    {% endblock %}
+
+</head>
+<body>
+
+<div>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button class="btn-sidebar">
+                    &#9776;
+                </button>
+                <a class="navbar-brand" href={{ path('dashboard') }}>Micro-Credit</a>
+            </div>
+            {% block navblock %}
+
+            {% endblock %}
+        </div>
+    </nav>
+</div>
+
+<div class="navbar-primary">
+    <ul class="navbar-primary-menu">
+        <li>
+            <a href="">Close X</a>
+            <a href={{ path('customer') }}><span class="glyphicon glyphicon-user"></span><span
+                        class="nav-label">Customers</span></a>
+            <a href={{ path('loan') }}><span class="glyphicon glyphicon-list-alt"></span><span
+                        class="nav-label">Loans</span></a>
+            <a href={{ path('witness') }}><span class="glyphicon glyphicon-eye-close"></span><span
+                        class="nav-label">Witnesses</span></a>
+            <a href={{ path('installment') }}><span class="glyphicon glyphicon-stats"></span><span
+                        class="nav-label">Installments</span></a>
+            <a href={{ path('admin') }}><span class="glyphicon glyphicon-cog"></span><span
+                        class="nav-label">Admin</span></a>
+        </li>
+    </ul>
+</div>
+
+{% block breadcrumb %}
+    {% if breadcrumbArray is defined %}
+        <ol class="breadcrumb">
+            {% for item in breadcrumbArray %}
+                <li class="breadcrumb-item"><a style="text-decoration: none"
+                                               href="{% if item[1] %}{{ path(item[1], {'id': item[2]}) }}{% else %}{{ '#' }}{% endif %}">{{ item[0] }}</a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+{% endblock %}
+
+<script>
+    $('.btn-sidebar').click(function (e) {
+        e.stopPropagation();
+        $(".navbar-primary").toggleClass('collapsed')
+    });
+
+    $(window).click(function (e) {
+        if ($(".navbar-primary").hasClass('collapsed')) {
+            $(".navbar-primary").toggleClass('collapsed')
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Customer View {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navblock %}
+    {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div>
+        <main>
+            <center>
+                <h3>Customer Details</h3>
+                <div class="container">
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>NIC</th>
+                                <th>Address</th>
+                                <th>Mobile</th>
+                                <th>Fixed</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ customer.name }}</td>
+                                <td>{{ customer.nic }}</td>
+                                <td>{{ customer.address }}</td>
+                                <td>{{ customer.mobile }}</td>
+                                <td>{{ customer.fixed }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <h4>{{ customer.name }} 's Loans</h4>
+                    <div class="row" style="overflow: auto; white-space: nowrap">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Loan Code</th>
+                                <th>Loan Amount</th>
+                                <th>Interest</th>
+                                <th>Started Date</th>
+                                <th>Period</th>
+                                <th>isComplete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for loan in customer.loans %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ loan.loanCode }}</td>
+                                    <td>{{ loan.loanAmount }}</td>
+                                    <td>{{ loan.interest }}</td>
+                                    <td>{{ loan.startedDate|date('Y-m-d') }}</td>
+                                    <td>{{ loan.period }}</td>
+                                    <td>{{ loan.isComplete }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </center>
+        </main>
+    </div>
+
+    <script>
+
+    </script>
+
+{% endblock %}

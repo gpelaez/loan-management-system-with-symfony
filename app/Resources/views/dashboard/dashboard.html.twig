@@ -1,0 +1,60 @@
+{% extends 'baseDashboard.html.twig' %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navblock %}
+    {{ parent() }}
+
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href={{ path('admin') }}>Admin</a></li>
+        <li><a href={{ path('logout') }}>Logout</a></li>
+    </ul>
+
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div>
+        <main>
+            <center>
+                <hr>
+                <h2>Micro-Credit Service</h2>
+                <hr>
+                <br><br>
+                <div class="container">
+                    <div>
+                        <div class="quick-actions_homepage">
+                            <ul class="quick-actions">
+                                <li><a href={{ path('customer') }}> <i class="icon-people"></i>Customers</a>
+                                </li>
+                                <li><a href={{ path('loan') }}> <i class="icon-cabinet"></i>Loans</a></li>
+                                <li><a href={{ path('witness') }}> <i class="icon-user"></i>Witnesses</a>
+                                </li>
+                                <li><a href={{ path('installment') }}> <i class="icon-wallet"></i>Installments</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </center>
+        </main>
+    </div>
+
+    <script>
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Admin Add {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navblock %}
+    {{ parent() }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div>
+        <main>
+            <center>
+                <h3>Add Admins</h3>
+                <div class="container">
+                    <div>
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </center>
+        </main>
+    </div>
+
+    <script>
+
+    </script>
+
+{% endblock %}
