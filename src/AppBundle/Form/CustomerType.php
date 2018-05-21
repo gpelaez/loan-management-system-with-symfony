@@ -9,21 +9,22 @@
 namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Entity\Customer;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class CustomerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text')
-            ->add('nic', 'text')
-            ->add('address', 'text')
-            ->add('mobile', 'text')
-            ->add('fixed', 'text')
-            ->add('save', 'submit')
+            ->add('name', TextType::class)
+            ->add('nic', TextType::class)
+            ->add('address', TextType::class)
+            ->add('mobile', TextType::class)
+            ->add('fixed', TextType::class)
         ;
     }
 

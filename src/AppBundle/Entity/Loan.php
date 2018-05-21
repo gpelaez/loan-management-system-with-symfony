@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Loan
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Entity\LoanRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LoanRepository")
  * @UniqueEntity("loanCode")
  */
 class Loan
@@ -77,6 +77,205 @@ class Loan
     private $isComplete;
 
     /**
+     * @var float
+     */
+    private $totalAmount;
+
+    /**
+     * @return float
+     */
+    public function getTotalAmount()
+    {
+        return $this->totalAmount;
+    }
+
+    /**
+     * @param $totalAmount
+     * @return $this
+     */
+    public function setTotalAmount($totalAmount)
+    {
+        $this->totalAmount = $totalAmount;
+
+        return $this;
+    }
+
+    /**
+     * @var float
+     */
+    private $weeklyPayment;
+
+    /**
+     * @return float
+     */
+    public function getWeeklyPayment()
+    {
+        return $this->weeklyPayment;
+    }
+
+    /**
+     * @param $weeklyPayment
+     * @return $this
+     */
+    public function setWeeklyPayment($weeklyPayment)
+    {
+        $this->weeklyPayment = $weeklyPayment;
+
+        return $this;
+    }
+
+    /**
+     * @var float
+     */
+    private $totalPayment;
+
+    /**
+     * @return float
+     */
+    public function getTotalPayment()
+    {
+        return $this->totalPayment;
+    }
+
+    /**
+     * @param $totalPayment
+     * @return $this
+     */
+    public function setTotalPayment($totalPayment)
+    {
+        $this->totalPayment = $totalPayment;
+
+        return $this;
+    }
+
+    /**
+     * @var float
+     */
+    private $totalPaymentDates;
+
+    /**
+     * @return float
+     */
+    public function getTotalPaymentDates()
+    {
+        return $this->totalPaymentDates;
+    }
+
+    /**
+     * @param $totalPaymentDates
+     * @return $this
+     */
+    public function setTotalPaymentDates($totalPaymentDates)
+    {
+        $this->totalPaymentDates = $totalPaymentDates;
+
+        return $this;
+    }
+
+    /**
+     * @var float
+     */
+    private $areasAmount;
+
+    /**
+     * @return float
+     */
+    public function getAreasAmount()
+    {
+        return $this->areasAmount;
+    }
+
+    /**
+     * @param $areasAmount
+     * @return $this
+     */
+    public function setAreasAmount($areasAmount)
+    {
+        $this->areasAmount = $areasAmount;
+
+        return $this;
+    }
+
+    /**
+     * @var float
+     */
+    private $areasAmountDates;
+
+    /**
+     * @return float
+     */
+    public function getAreasAmountDates()
+    {
+        return $this->areasAmountDates;
+    }
+
+    /**
+     * @param $areasAmountDates
+     * @return $this
+     */
+    public function setAreasAmountDates($areasAmountDates)
+    {
+        $this->areasAmountDates = $areasAmountDates;
+
+        return $this;
+    }
+
+    /**
+     * @var float
+     */
+    private $lastInstallmentAmount;
+
+    /**
+     * @return float
+     */
+    public function getLastInstallmentAmount()
+    {
+        return $this->lastInstallmentAmount;
+    }
+
+    /**
+     * @param $lastInstallmentAmount
+     * @return $this
+     */
+    public function setLastInstallmentAmount($lastInstallmentAmount)
+    {
+        $this->lastInstallmentAmount = $lastInstallmentAmount;
+
+        return $this;
+    }
+
+    /**
+     * @var float
+     */
+    private $lastInstallmentAmountDates;
+
+    /**
+     * @return float
+     */
+    public function getLastInstallmentAmountDates()
+    {
+        return $this->lastInstallmentAmountDates;
+    }
+
+    /**
+     * @param $lastInstallmentAmountDates
+     * @return $this
+     */
+    public function setLastInstallmentAmountDates($lastInstallmentAmountDates)
+    {
+        $this->lastInstallmentAmountDates = $lastInstallmentAmountDates;
+
+        return $this;
+    }
+
+    /**
+     * Many Loans have One Area.
+     * @ORM\ManyToOne(targetEntity="Area", inversedBy="loans")
+     * @ORM\JoinColumn(name="area_id", referencedColumnName="id")
+     */
+    private $area;
+
+    /**
      * Many Loans have One Customer.
      * @ORM\ManyToOne(targetEntity="Customer", inversedBy="loans")
      * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
@@ -95,6 +294,9 @@ class Loan
      */
     private $witnesses;
 
+    /**
+     * Loan constructor.
+     */
     public function __construct() {
         $this->setDateTime(new \DateTime());
         $this->setStartedDate(new \DateTime());
@@ -296,7 +498,7 @@ class Loan
      *
      * @return Loan
      */
-    public function setCustomer(\AppBundle\Entity\Customer $customer = null)
+    public function setCustomer(Customer $customer = null)
     {
         $this->customer = $customer;
 
@@ -320,7 +522,7 @@ class Loan
      *
      * @return Loan
      */
-    public function addInstallment(\AppBundle\Entity\Installment $installment)
+    public function addInstallment(Installment $installment)
     {
         $this->installments[] = $installment;
 
@@ -332,7 +534,7 @@ class Loan
      *
      * @param \AppBundle\Entity\Installment $installment
      */
-    public function removeInstallment(\AppBundle\Entity\Installment $installment)
+    public function removeInstallment(Installment $installment)
     {
         $this->installments->removeElement($installment);
     }
@@ -354,7 +556,7 @@ class Loan
      *
      * @return Loan
      */
-    public function addWitness(\AppBundle\Entity\Witness $witness = null)
+    public function addWitness(Witness $witness = null)
     {
         $this->witnesses[] = $witness;
 
@@ -366,7 +568,7 @@ class Loan
      *
      * @param \AppBundle\Entity\Witness $witness
      */
-    public function removeWitness(\AppBundle\Entity\Witness $witness)
+    public function removeWitness(Witness $witness)
     {
         $this->witnesses->removeElement($witness);
     }
@@ -379,5 +581,29 @@ class Loan
     public function getWitnesses()
     {
         return $this->witnesses;
+    }
+
+    /**
+     * Set area
+     *
+     * @param \AppBundle\Entity\Area $area
+     *
+     * @return Loan
+     */
+    public function setArea(Area $area = null)
+    {
+        $this->area = $area;
+
+        return $this;
+    }
+
+    /**
+     * Get area
+     *
+     * @return \AppBundle\Entity\Area
+     */
+    public function getArea()
+    {
+        return $this->area;
     }
 }

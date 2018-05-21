@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  * Admin
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Entity\AdminRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\AdminRepository")
  */
 class Admin implements AdvancedUserInterface, \Serializable
 {
@@ -50,6 +50,9 @@ class Admin implements AdvancedUserInterface, \Serializable
      */
     private $isActive;
 
+    /**
+     * Admin constructor.
+     */
     public function __construct()
     {
         $this->setDateTime(new \DateTime());

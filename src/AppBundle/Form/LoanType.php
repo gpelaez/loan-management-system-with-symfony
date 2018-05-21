@@ -8,7 +8,15 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Area;
+use AppBundle\Entity\Customer;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\PercentType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Entity\Loan;
@@ -18,17 +26,27 @@ class LoanType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('customer', 'entity', array(
-                'class'=>'AppBundle:Customer',
-                'required'=>true,
+            ->add('id', IntegerType::class)
+            ->add('loanAmount', NumberType::class)
+            ->add('loanCode', TextType::class)
+            ->add('startedDate', DateType::class)
+            ->add('interest', PercentType::class)
+            ->add('period', IntegerType::class)
+            ->add('isComplete', IntegerType::class)
+            ->add('totalAmount', NumberType::class)
+            ->add('weeklyPayment', NumberType::class)
+            ->add('totalPayment', NumberType::class)
+            ->add('totalPaymentDates', NumberType::class)
+            ->add('areasAmount', NumberType::class)
+            ->add('areasAmountDates', NumberType::class)
+            ->add('lastInstallmentAmount', NumberType::class)
+            ->add('lastInstallmentAmountDates', NumberType::class)
+            ->add('area', EntityType::class, array(
+                'class'=>Area::class,
             ))
-            ->add('loanAmount', 'number')
-            ->add('loanCode', 'text')
-            ->add('startedDate', 'date')
-            ->add('interest', 'percent')
-            ->add('period', 'integer')
-            ->add('isComplete', 'integer')
-            ->add('save', 'submit')
+            ->add('customer', EntityType::class, array(
+                'class'=>Customer::class,
+            ))
         ;
     }
 

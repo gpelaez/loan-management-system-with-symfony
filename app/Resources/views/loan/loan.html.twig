@@ -48,58 +48,50 @@
                             <tr>
                                 <th>#</th>
                                 <th>Loan Code</th>
-                                <th>Customer Name</th>
-                                <th>Customer NIC</th>
+                                <th>Customer</th>
                                 <th>Loan Amount</th>
+                                {#<th>Total Amount</th>#}
                                 <th>Started Date</th>
-                                <th>Interest</th>
-                                <th>Period</th>
-                                <th>isComplete</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+                                <th>Weekly Payment</th>
+                                <th>Total Payment</th>
+                                <th>Areas Amount</th>
+                                <th>Last Installment</th>
+                                {#<th>Interest</th>#}
+                                {#<th>Period</th>#}
+                                {#<th>isComplete</th>#}
+                                {#<th>Area</th>#}
+                                {#<th></th>#}
                             </tr>
                             </thead>
                             <tbody>
-                            {% for loan in loans %}
+                            {% for loan in form.loans %}
                                 <tr>
                                     <td>{{ loop.index }}</td>
-                                    <td>{{ loan.loanCode }}</td>
-                                    <td>{{ loan.customer.name }}</td>
-                                    <td>{{ loan.customer.nic }}</td>
-                                    <td>{{ loan.loanAmount }}</td>
-                                    <td>{{ loan.startedDate|date('Y-m-d') }}</td>
-                                    <td>{{ loan.interest }}</td>
-                                    <td>{{ loan.period }}</td>
-                                    <td>{{ loan.isComplete }}</td>
-                                    <td><a class="btn btn-default btn-sm"
-                                           href={{ path('loanView', {'id': loan.id}) }}>View</a></td>
-                                    <td><a class="btn btn-default btn-sm"
-                                           href={{ path('loanEdit', {'id': loan.id}) }}>Edit</a></td>
-                                    <td>
-                                        <form action="{{ path('witness') }}" method="post">
-                                            <button type="submit" class="btn btn-default btn-sm" name="loanId"
-                                                    value="{{ loan.id }}">Witnesses
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <form action="{{ path('installment') }}" method="post">
-                                            <button type="submit" class="btn btn-default btn-sm" name="loanId"
-                                                    value="{{ loan.id }}">Installments
-                                            </button>
-                                        </form>
-                                    </td>
+                                    <td>{{ form(loan.loanCode) }}</td>
+                                    <td>{{ form(loan.customer) }}</td>
+                                    <td>{{ form(loan.loanAmount) }}</td>
+                                    {#<td>{{ form(loan.totalAmount) }}</td>#}
+                                    <td>{{ form(loan.startedDate) }}</td>
+                                    <td>{{ form(loan.weeklyPayment) }}</td>
+                                    <td>{{ form(loan.totalPayment) }}</td>
+                                    <td>{{ form(loan.areasAmount) }}</td>
+                                    <td>{{ form(loan.lastInstallmentAmount) }}</td>
+                                    {#<td>{{ form(loan.interest) }}</td>#}
+                                    {#<td>{{ form(loan.period) }}</td>#}
+                                    {#<td>{{ form(loan.isComplete) }}</td>#}
+                                    {#<td>{{ form(loan.area) }}</td>#}
+                                    <td><a class="btn btn-default btn-xs"
+                                           href={{ path('loanView', {'id': loan.id.vars.value}) }}>View</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                    <div>{{ form_row(form.save) }}</div>
                 </div>
-                <div class="navigation">
-                    {{ knp_pagination_render(loans) }}
-                </div>
+                {#<div class="navigation">#}
+                {#{{ knp_pagination_render(loans) }}#}
+                {#</div>#}
             </center>
         </main>
     </div>

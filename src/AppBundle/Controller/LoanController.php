@@ -8,6 +8,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Area;
+use AppBundle\Form\AreaType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,69 +22,90 @@ use AppBundle\Entity\Installment;
 class LoanController extends BaseController
 {
     /**
-     * @Route("/dashboard/loan", name="loan")
+     * @Route("/dashboard/area/{id}/loan", name="loan")
      */
-    public function Loan(Request $request)
+    public function Loan(Request $request, $id)
     {
-        $search = $request->get('search');
-        $customerId = $request->get('customerId');
-        $witnessId = $request->get('witnessId');
+        $area = $this->getDoctrine()
+            ->getRepository(Area::class)
+            ->find($id);
 
-        if($search) {
-            $loans = $this->getDoctrine()
-                ->getRepository(Loan::class)
-                ->findByLoanSearch($search);
-            $breadcrumbArray = array(
-                array('Dashboard' , 'dashboard', ''),
-                array('Loan' , '', ''),
-            );
-        }
-        elseif ($customerId) {
-            $customer = $this->getDoctrine()
-                ->getRepository(Customer::class)
-                ->find($customerId);
-            $loans = $customer->getLoans();
-            $breadcrumbArray = array(
-                array('Dashboard' , 'dashboard', ''),
-                array('Customer' , 'customer', ''),
-                array($customer->getName() , 'customerView', $customerId),
-                array('Loan' , '', ''),
-            );
-        }
-        elseif ($witnessId) {
-            $witness = $this->getDoctrine()
-                ->getRepository(Witness::class)
-                ->find($witnessId);
-            $loans = $witness->getLoans();
-            $breadcrumbArray = array(
-                array('Dashboard' , 'dashboard', ''),
-                array('Witness' , 'witness', ''),
-                array($witness->getName() , 'witnessView', $witnessId),
-                array('Loan' , '', ''),
-            );
-        }
-        else {
-            $loans = $this->getDoctrine()
-                ->getRepository(Loan::class)
-                ->findBy(array(
-                    'isComplete'=>0
-                ));
-            $breadcrumbArray = array(
-                array('Dashboard' , 'dashboard', ''),
-                array('Loan' , '', ''),
+        if (!$area) {
+            throw $this->createNotFoundException(
+                'No Area Found !'
             );
         }
 
-        $paginator  = $this->get('knp_paginator');
-        $pagination = $paginator->paginate(
-            $loans, /* query NOT result */
-            $request->query->getInt('page', 1)/*page number*/,
-            7/*limit per page*/
-        );
+        foreach ($area->getLoans() as $loan) {
+
+            $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
+
+            $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
+
+            $weeklyPayment = $amountPerDay * 7;
+
+            $totalPayment = 0;
+            foreach($loan->getInstallments() as $installment)
+            {
+                $totalPayment += $installment->getInstallmentAmount();
+            }
+
+            $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
+
+            $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
+
+            $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
+
+            $areasAmountDates = round($areasAmount/$amountPerDay, 2);
+
+            $installments = $this->getDoctrine()
+                ->getRepository(Installment::class)
+                ->findBy(
+                    array('loan'=>$loan),
+                    array('paymentDate' => 'DESC')
+                );
+
+            $lastInstallmentAmount=0;
+
+            if($installments) {
+                $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
+            }
+
+            $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
+
+
+            $loan->setTotalAmount($totalAmount);
+            $loan->setWeeklyPayment($weeklyPayment);
+            $loan->setTotalPayment($totalPayment);
+            $loan->setTotalPaymentDates($totalPaymentDates);
+            $loan->setAreasAmount($areasAmount);
+            $loan->setAreasAmountDates($areasAmountDates);
+            $loan->setLastInstallmentAmount($lastInstallmentAmount);
+            $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
+        }
+
+        $form = $this->createForm(AreaType::class, $area);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() & $form->isValid()) {
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($area);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('loan', array('id' => $id));
+
+        }
+
+//        $paginator  = $this->get('knp_paginator');
+//        $pagination = $paginator->paginate(
+//            $loans, /* query NOT result */
+//            $request->query->getInt('page', 1)/*page number*/,
+//            7/*limit per page*/
+//        );
 
         return $this->render('loan/loan.html.twig', array(
-            'loans'=>$pagination,
-            'breadcrumbArray'=>$breadcrumbArray,
+            'form' => $form->createView(),
         ));
     }
 

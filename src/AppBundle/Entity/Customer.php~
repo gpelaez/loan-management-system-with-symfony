@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Customer
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Entity\CustomerRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CustomerRepository")
  * @UniqueEntity("nic")
  */
 class Customer
@@ -75,6 +75,9 @@ class Customer
      */
     private $loans;
 
+    /**
+     * Customer constructor.
+     */
     public function __construct() {
         $this->setDateTime(new \DateTime());
         $this->loans = new ArrayCollection();
@@ -85,7 +88,7 @@ class Customer
      */
     public function __toString()
     {
-        return $this->getNic()." - ".$this->getName();
+        return $this->getName()." "."(".$this->getNic().")";
     }
 
     /**
@@ -249,7 +252,7 @@ class Customer
      *
      * @return Customer
      */
-    public function addLoan(\AppBundle\Entity\Loan $loan)
+    public function addLoan(Loan $loan)
     {
         $this->loans[] = $loan;
 
@@ -261,7 +264,7 @@ class Customer
      *
      * @param \AppBundle\Entity\Loan $loan
      */
-    public function removeLoan(\AppBundle\Entity\Loan $loan)
+    public function removeLoan(Loan $loan)
     {
         $this->loans->removeElement($loan);
     }

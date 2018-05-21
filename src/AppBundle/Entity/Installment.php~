@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Installment
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Entity\InstallmentRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\InstallmentRepository")
  */
 class Installment
 {
@@ -51,6 +51,9 @@ class Installment
      */
     private $loan;
 
+    /**
+     * Installment constructor.
+     */
     public function __construct() {
         $this->setDateTime(new \DateTime());
         $this->setPaymentDate(new \DateTime());
@@ -145,7 +148,7 @@ class Installment
      *
      * @return Installment
      */
-    public function setLoan(\AppBundle\Entity\Loan $loan = null)
+    public function setLoan(Loan $loan = null)
     {
         $this->loan = $loan;
 

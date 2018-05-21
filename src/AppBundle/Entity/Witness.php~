@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Witness
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Entity\WitnessRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\WitnessRepository")
  * @UniqueEntity("nic")
  */
 class Witness
@@ -76,6 +76,9 @@ class Witness
      */
     private $loans;
 
+    /**
+     * Witness constructor.
+     */
     public function __construct() {
         $this->setDateTime(new \DateTime());
         $this->loans = new ArrayCollection();
