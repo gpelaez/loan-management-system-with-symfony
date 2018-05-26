@@ -48,9 +48,10 @@
                             <tr>
                                 <th>#</th>
                                 <th>Loan Code</th>
-                                <th>Customer</th>
+                                <th>Customer Name</th>
+                                <th>Customer Nic</th>
                                 <th>Loan Amount</th>
-                                {#<th>Total Amount</th>#}
+                                <th>Total Amount</th>
                                 <th>Started Date</th>
                                 <th>Weekly Payment</th>
                                 <th>Total Payment</th>
@@ -64,30 +65,31 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for loan in form.loans %}
+                            {% for loan in area.loans %}
                                 <tr>
                                     <td>{{ loop.index }}</td>
-                                    <td>{{ form(loan.loanCode) }}</td>
-                                    <td>{{ form(loan.customer) }}</td>
-                                    <td>{{ form(loan.loanAmount) }}</td>
-                                    {#<td>{{ form(loan.totalAmount) }}</td>#}
-                                    <td>{{ form(loan.startedDate) }}</td>
-                                    <td>{{ form(loan.weeklyPayment) }}</td>
-                                    <td>{{ form(loan.totalPayment) }}</td>
-                                    <td>{{ form(loan.areasAmount) }}</td>
-                                    <td>{{ form(loan.lastInstallmentAmount) }}</td>
+                                    <td>{{ loan.loanCode }}</td>
+                                    <td>{{ loan.customer.name }}</td>
+                                    <td>{{ loan.customer.nic }}</td>
+                                    <td>{{ loan.loanAmount }}</td>
+                                    <td>{{ loan.totalAmount }}</td>
+                                    <td>{{ loan.startedDate|date('Y-m-d') }}</td>
+                                    <td>{{ loan.weeklyPayment }}</td>
+                                    <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }}</td>
+                                    <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }}</td>
+                                    <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment" loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }}</td>
                                     {#<td>{{ form(loan.interest) }}</td>#}
                                     {#<td>{{ form(loan.period) }}</td>#}
                                     {#<td>{{ form(loan.isComplete) }}</td>#}
                                     {#<td>{{ form(loan.area) }}</td>#}
-                                    <td><a class="btn btn-default btn-xs"
-                                           href={{ path('loanView', {'id': loan.id.vars.value}) }}>View</a></td>
+                                    {#<td><a class="btn btn-default btn-xs"#}
+                                           {#href="">View</a></td>#}
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
-                    <div>{{ form_row(form.save) }}</div>
+                    {#<div>{{ form_row(form.save) }}</div>#}
                 </div>
                 {#<div class="navigation">#}
                 {#{{ knp_pagination_render(loans) }}#}
@@ -97,6 +99,44 @@
     </div>
 
     <script>
+        $(document).ready(function(){
+
+            // $.fn.editable.defaults.mode = 'inline';
+            $('.add-installment').editable({
+                type: 'text',
+                savenochange: true,
+                success: function(k,v){
+                    var loanId = $(this).attr("loanId");
+                    // $('.name-list '+href).html(v);
+
+                    $.ajax({
+                        url:'{{ path('loanUpdate') }}',
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            "id": loanId,
+                            "installmentAmount":v
+                        },
+                        async: true,
+                        success: function (data)
+                        {
+                            $('#'+loanId+'-totalPayment').html(data.totalPayment);
+                            $('#'+loanId+'-areasAmount').html(data.areasAmount);
+                            $('#'+loanId+'-lastInstallmentAmount').html(data.lastInstallmentAmount);
+                            alert("Successfully Added !");
+
+                        },
+                        statusCode: {
+                            500: function() {
+                                alert("Failed !");
+                            }
+                        }
+                    });
+
+                }
+            });
+
+        });
 
     </script>
 
