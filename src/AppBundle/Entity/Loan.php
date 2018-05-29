@@ -298,7 +298,8 @@ class Loan
     /**
      * Loan constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->setDateTime(new \DateTime());
         $this->setStartedDate(new \DateTime());
         $this->setIsComplete(0);

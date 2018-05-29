@@ -68,53 +68,56 @@
                                     {#<td>{{ loan.totalAmount }}</td>#}
                                     <td>{{ loan.startedDate|date('Y-m-d') }}</td>
                                     <td>{{ loan.weeklyPayment }}</td>
-                                    <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }} ({{ loan.totalPaymentDates }})</td>
-                                    <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }} ({{ loan.areasAmountDates }})</td>
-                                    <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment" loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }}</td>
+                                    <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }}
+                                        ({{ loan.totalPaymentDates }})
+                                    </td>
+                                    <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }}
+                                        ({{ loan.areasAmountDates }})
+                                    </td>
+                                    <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment"
+                                        loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }}</td>
                                     <td>{{ loan.period }}</td>
                                     <td><a class="btn btn-default btn-xs"
-                                           href="{{ path('loanView', {'areaId':areaId, 'loanId':loan.id}) }}">View</a></td>
+                                           href="{{ path('loanView', {'areaId':areaId, 'loanId':loan.id}) }}">View</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                {#<div class="navigation">#}
-                {#{{ knp_pagination_render(loans) }}#}
-                {#</div>#}
+                <div class="navigation">
+                    {{ knp_pagination_render(loans) }}
+                </div>
             </center>
         </main>
     </div>
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
 
             $.fn.editable.defaults.mode = 'inline';
             $('.add-installment').editable({
                 type: 'text',
                 savenochange: true,
-                success: function(k,v){
+                success: function (k, v) {
                     var loanId = $(this).attr("loanId");
 
                     $.ajax({
-                        url:"/dashboard/loan/" + loanId + "/add-installment/" + v,
+                        url: "/dashboard/loan/" + loanId + "/add-installment/" + v,
                         type: "POST",
                         dataType: "json",
-                        data: {
-
-                        },
+                        data: {},
                         async: true,
-                        success: function (data)
-                        {
-                            $('#'+loanId+'-totalPayment').html(data.totalPayment + " (" + data.totalPaymentDates + ")");
-                            $('#'+loanId+'-areasAmount').html(data.areasAmount + " (" + data.areasAmountDates + ")");
-                            $('#'+loanId+'-lastInstallmentAmount').html(data.lastInstallmentAmount);
+                        success: function (data) {
+                            $('#' + loanId + '-totalPayment').html(data.totalPayment + " (" + data.totalPaymentDates + ")");
+                            $('#' + loanId + '-areasAmount').html(data.areasAmount + " (" + data.areasAmountDates + ")");
+                            $('#' + loanId + '-lastInstallmentAmount').html(data.lastInstallmentAmount);
                             alert("Successfully Added !");
 
                         },
                         statusCode: {
-                            500: function() {
+                            500: function () {
                                 alert("Failed !");
                             }
                         }

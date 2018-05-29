@@ -54,7 +54,8 @@ class Installment
     /**
      * Installment constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->setDateTime(new \DateTime());
         $this->setPaymentDate(new \DateTime());
     }

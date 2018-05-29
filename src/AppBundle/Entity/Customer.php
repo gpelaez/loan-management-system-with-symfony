@@ -78,7 +78,8 @@ class Customer
     /**
      * Customer constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->setDateTime(new \DateTime());
         $this->loans = new ArrayCollection();
     }
@@ -88,7 +89,7 @@ class Customer
      */
     public function __toString()
     {
-        return $this->getName()." "."(".$this->getNic().")";
+        return $this->getName() . " " . "(" . $this->getNic() . ")";
     }
 
     /**

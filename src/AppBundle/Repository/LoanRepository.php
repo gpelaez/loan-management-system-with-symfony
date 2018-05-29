@@ -2,8 +2,6 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Loan;
-
 /**
  * LoanRepository
  *
@@ -12,7 +10,8 @@ use AppBundle\Entity\Loan;
  */
 class LoanRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findLoansByAreaId($areaId){
+    public function findLoansByAreaId($areaId)
+    {
         return $this->createQueryBuilder('l')
             ->where('l.isComplete = 0')
             ->andWhere('l.area = :areaId')
@@ -21,18 +20,20 @@ class LoanRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
-    public function findLoansBySearch($areaId, $search){
+    public function findLoansBySearch($areaId, $search)
+    {
         return $this->createQueryBuilder('l')
             ->where('l.isComplete = 0')
             ->andWhere('l.area = :areaId')
             ->andWhere('l.loanCode LIKE :search')
             ->setParameter('areaId', $areaId)
-            ->setParameter('search', '%'.$search.'%')
+            ->setParameter('search', '%' . $search . '%')
             ->getQuery()
             ->getResult();
     }
 
-    public function findCompletedLoansByAreaId($areaId){
+    public function findCompletedLoansByAreaId($areaId)
+    {
         return $this->createQueryBuilder('l')
             ->where('l.isComplete = 1')
             ->andWhere('l.area = :areaId')
@@ -41,13 +42,14 @@ class LoanRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
-    public function findCompletedLoansBySearch($areaId, $search){
+    public function findCompletedLoansBySearch($areaId, $search)
+    {
         return $this->createQueryBuilder('l')
             ->where('l.isComplete = 1')
             ->andWhere('l.area = :areaId')
             ->andWhere('l.loanCode LIKE :search')
             ->setParameter('areaId', $areaId)
-            ->setParameter('search', '%'.$search.'%')
+            ->setParameter('search', '%' . $search . '%')
             ->getQuery()
             ->getResult();
     }

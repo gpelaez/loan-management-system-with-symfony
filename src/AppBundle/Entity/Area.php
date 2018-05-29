@@ -121,7 +121,7 @@ class Area
      */
     public function __toString()
     {
-        return $this->getAreaName()." "."(".$this->getAreaCode().")";
+        return $this->getAreaName() . " " . "(" . $this->getAreaCode() . ")";
     }
 
     /**

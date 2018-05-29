@@ -10,7 +10,8 @@ namespace AppBundle\Repository;
  */
 class CustomerRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findCustomerByNic($customerNic){
+    public function findCustomerByNic($customerNic)
+    {
         return $this->createQueryBuilder('c')
             ->where('c.nic = :customerNic')
             ->setParameter('customerNic', $customerNic)

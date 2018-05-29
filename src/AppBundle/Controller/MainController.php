@@ -29,12 +29,6 @@ class MainController extends BaseController
      */
     public function dashboard(Request $request)
     {
-        $breadcrumbArray = array(
-            array('Dashboard' , 'dashboard', ''),
-        );
-
-        return $this->render('dashboard/dashboard.html.twig', array(
-            'breadcrumbArray'=>$breadcrumbArray,
-        ));
+        return $this->render('dashboard/dashboard.html.twig', array());
     }
 }

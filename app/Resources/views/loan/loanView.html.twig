@@ -47,12 +47,12 @@
                             <tr>
                                 <td>{{ loan.loanCode }}</td>
                                 <td>{{ loan.loanAmount }}</td>
-                                <td>{{ totalAmount }}</td>
+                                <td>{{ loan.totalAmount }}</td>
                                 <td>{{ loan.startedDate|date('Y-m-d') }}</td>
-                                <td>{{ weeklyPayment }}</td>
-                                <td>{{ totalPayment }} ({{ totalPaymentDates }})</td>
-                                <td>{{ areasAmount }} ({{ areasAmountDates }})</td>
-                                <td>{{ lastInstallmentAmount }} ({{ lastInstallmentAmountDates }})</td>
+                                <td>{{ loan.weeklyPayment }}</td>
+                                <td>{{ loan.totalPayment }} ({{ loan.totalPaymentDates }})</td>
+                                <td>{{ loan.areasAmount }} ({{ loan.areasAmountDates }})</td>
+                                <td>{{ loan.lastInstallmentAmount }} ({{ loan.lastInstallmentAmountDates }})</td>
                                 <td>{{ loan.interest }}</td>
                                 <td>{{ loan.period }}</td>
                                 <td>{{ loan.isComplete }}</td>

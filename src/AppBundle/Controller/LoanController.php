@@ -8,11 +8,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Area;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Entity\Area;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Customer;
 use AppBundle\Entity\Witness;
@@ -37,63 +37,19 @@ class LoanController extends BaseController
         }
 
         foreach ($loans as $loan) {
-
-            $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
-
-            $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
-
-            $weeklyPayment = $amountPerDay * 7;
-
-            $totalPayment = 0;
-            foreach($loan->getInstallments() as $installment)
-            {
-                $totalPayment += $installment->getInstallmentAmount();
-            }
-
-            $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
-
-            $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
-
-            $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
-
-            $areasAmountDates = round($areasAmount/$amountPerDay, 2);
-
-            $installments = $this->getDoctrine()
-                ->getRepository(Installment::class)
-                ->findBy(
-                    array('loan'=>$loan),
-                    array('paymentDate' => 'DESC')
-                );
-
-            $lastInstallmentAmount=0;
-
-            if($installments) {
-                $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
-            }
-
-            $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
-
-
-            $loan->setTotalAmount($totalAmount);
-            $loan->setWeeklyPayment($weeklyPayment);
-            $loan->setTotalPayment($totalPayment);
-            $loan->setTotalPaymentDates($totalPaymentDates);
-            $loan->setAreasAmount($areasAmount);
-            $loan->setAreasAmountDates($areasAmountDates);
-            $loan->setLastInstallmentAmount($lastInstallmentAmount);
-            $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
+            $this->updateLoanByCalculations($loan);
         }
 
-//        $paginator  = $this->get('knp_paginator');
-//        $pagination = $paginator->paginate(
-//            $loans, /* query NOT result */
-//            $request->query->getInt('page', 1)/*page number*/,
-//            7/*limit per page*/
-//        );
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $loans, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            7/*limit per page*/
+        );
 
         return $this->render('loan/loan.html.twig', array(
-            'areaId'=>$areaId,
-            'loans'=>$loans,
+            'areaId' => $areaId,
+            'loans' => $pagination,
         ));
     }
 
@@ -121,59 +77,14 @@ class LoanController extends BaseController
         $entityManager->persist($installment);
         $entityManager->flush();
 
-
-        $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
-
-        $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
-
-        $weeklyPayment = $amountPerDay * 7;
-
-        $totalPayment = 0;
-        foreach($loan->getInstallments() as $installment)
-        {
-            $totalPayment += $installment->getInstallmentAmount();
-        }
-
-        $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
-
-        $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
-
-        $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
-
-        $areasAmountDates = round($areasAmount/$amountPerDay, 2);
-
-        $installments = $this->getDoctrine()
-            ->getRepository(Installment::class)
-            ->findBy(
-                array('loan'=>$loan),
-                array('paymentDate' => 'DESC')
-            );
-
-        $lastInstallmentAmount=0;
-
-        if($installments) {
-            $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
-        }
-
-        $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
-
-
-        $loan->setTotalAmount($totalAmount);
-        $loan->setWeeklyPayment($weeklyPayment);
-        $loan->setTotalPayment($totalPayment);
-        $loan->setTotalPaymentDates($totalPaymentDates);
-        $loan->setAreasAmount($areasAmount);
-        $loan->setAreasAmountDates($areasAmountDates);
-        $loan->setLastInstallmentAmount($lastInstallmentAmount);
-        $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
+        $loan = $this->updateLoanByCalculations($loan);
 
         $data = array(
-            'totalPayment'=>$totalPayment,
-            'totalPaymentDates'=>$totalPaymentDates,
-            'areasAmount'=>$areasAmount,
-            'areasAmountDates'=>$areasAmountDates,
-            'lastInstallmentAmount'=>$lastInstallmentAmount,
-            'lastInstallmentAmountDates'=>$lastInstallmentAmountDates,
+            'totalPayment' => $loan->getTotalPayment(),
+            'totalPaymentDates' => $loan->getTotalPaymentDates(),
+            'areasAmount' => $loan->getAreasAmount(),
+            'areasAmountDates' => $loan->getAreasAmountDates(),
+            'lastInstallmentAmount' => $loan->getLastInstallmentAmount(),
         );
 
         return new JsonResponse($data);
@@ -194,53 +105,12 @@ class LoanController extends BaseController
             );
         }
 
-        $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
-
-        $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
-
-        $weeklyPayment = $amountPerDay * 7;
-
-        $totalPayment = 0;
-        foreach($loan->getInstallments() as $installment)
-        {
-            $totalPayment += $installment->getInstallmentAmount();
-        }
-
-        $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
-
-        $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
-
-        $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
-
-        $areasAmountDates = round($areasAmount/$amountPerDay, 2);
-
-        $installments = $this->getDoctrine()
-            ->getRepository(Installment::class)
-            ->findBy(
-                array('loan'=>$loan),
-                array('paymentDate' => 'DESC')
-            );
-
-        $lastInstallmentAmount=0;
-
-        if($installments) {
-            $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
-        }
-
-        $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
+        $loan = $this->updateLoanByCalculations($loan);
 
         return $this->render('loan/loanView.html.twig', array(
-            'areaId'=>$areaId,
-            'loanId'=>$loanId,
-            'loan'=>$loan,
-            'totalAmount'=>$totalAmount,
-            'weeklyPayment'=>$weeklyPayment,
-            'totalPayment'=>$totalPayment,
-            'totalPaymentDates'=>$totalPaymentDates,
-            'areasAmount'=>$areasAmount,
-            'areasAmountDates'=>$areasAmountDates,
-            'lastInstallmentAmount'=>$lastInstallmentAmount,
-            'lastInstallmentAmountDates'=>$lastInstallmentAmountDates,
+            'areaId' => $areaId,
+            'loanId' => $loanId,
+            'loan' => $loan,
         ));
     }
 
@@ -346,8 +216,8 @@ class LoanController extends BaseController
             $entityManager->flush();
 
             return $this->redirectToRoute('loanEdit', array(
-                'areaId'=>$areaId,
-                'loanId'=>$loanId,
+                'areaId' => $areaId,
+                'loanId' => $loanId,
             ));
         }
 
@@ -377,33 +247,33 @@ class LoanController extends BaseController
         $witness2Fixed = $loan->getWitnesses()[1]->getFixed();
 
         return $this->render('loan/loanEdit.html.twig', array(
-            'areaId'=>$areaId,
+            'areaId' => $areaId,
+            'loanId' => $loanId,
 
-            'customerName'=>$customerName,
-            'customerNic'=>$customerNic,
-            'customerAddress'=>$customerAddress,
-            'customerMobile'=>$customerMobile,
-            'customerFixed'=>$customerFixed,
+            'customerName' => $customerName,
+            'customerNic' => $customerNic,
+            'customerAddress' => $customerAddress,
+            'customerMobile' => $customerMobile,
+            'customerFixed' => $customerFixed,
 
-            'loanId'=>$loanId,
-            'loanAmount'=>$loanAmount,
-            'loanCode'=>$loanCode,
-            'loanStartedDate'=>$loanStartedDate,
-            'loanInterest'=>$loanInterest,
-            'loanPeriod'=>$loanPeriod,
-            'loanIsComplete'=>$loanIsComplete,
+            'loanAmount' => $loanAmount,
+            'loanCode' => $loanCode,
+            'loanStartedDate' => $loanStartedDate,
+            'loanInterest' => $loanInterest,
+            'loanPeriod' => $loanPeriod,
+            'loanIsComplete' => $loanIsComplete,
 
-            'witness1Name'=>$witness1Name,
-            'witness1Nic'=>$witness1Nic,
-            'witness1Address'=>$witness1Address,
-            'witness1Mobile'=>$witness1Mobile,
-            'witness1Fixed'=>$witness1Fixed,
+            'witness1Name' => $witness1Name,
+            'witness1Nic' => $witness1Nic,
+            'witness1Address' => $witness1Address,
+            'witness1Mobile' => $witness1Mobile,
+            'witness1Fixed' => $witness1Fixed,
 
-            'witness2Name'=>$witness2Name,
-            'witness2Nic'=>$witness2Nic,
-            'witness2Address'=>$witness2Address,
-            'witness2Mobile'=>$witness2Mobile,
-            'witness2Fixed'=>$witness2Fixed,
+            'witness2Name' => $witness2Name,
+            'witness2Nic' => $witness2Nic,
+            'witness2Address' => $witness2Address,
+            'witness2Mobile' => $witness2Mobile,
+            'witness2Fixed' => $witness2Fixed,
         ));
     }
 
@@ -511,12 +381,12 @@ class LoanController extends BaseController
             $entityManager->flush();
 
             return $this->redirectToRoute('loanAdd', array(
-                'areaId'=>$areaId,
+                'areaId' => $areaId,
             ));
         }
 
         return $this->render('loan/loanAdd.html.twig', array(
-            'areaId'=>$areaId,
+            'areaId' => $areaId,
         ));
     }
 
@@ -537,63 +407,19 @@ class LoanController extends BaseController
         }
 
         foreach ($loans as $loan) {
-
-            $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
-
-            $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
-
-            $weeklyPayment = $amountPerDay * 7;
-
-            $totalPayment = 0;
-            foreach($loan->getInstallments() as $installment)
-            {
-                $totalPayment += $installment->getInstallmentAmount();
-            }
-
-            $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
-
-            $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
-
-            $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
-
-            $areasAmountDates = round($areasAmount/$amountPerDay, 2);
-
-            $installments = $this->getDoctrine()
-                ->getRepository(Installment::class)
-                ->findBy(
-                    array('loan'=>$loan),
-                    array('paymentDate' => 'DESC')
-                );
-
-            $lastInstallmentAmount=0;
-
-            if($installments) {
-                $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
-            }
-
-            $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
-
-
-            $loan->setTotalAmount($totalAmount);
-            $loan->setWeeklyPayment($weeklyPayment);
-            $loan->setTotalPayment($totalPayment);
-            $loan->setTotalPaymentDates($totalPaymentDates);
-            $loan->setAreasAmount($areasAmount);
-            $loan->setAreasAmountDates($areasAmountDates);
-            $loan->setLastInstallmentAmount($lastInstallmentAmount);
-            $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
+            $this->updateLoanByCalculations($loan);
         }
 
-//        $paginator  = $this->get('knp_paginator');
-//        $pagination = $paginator->paginate(
-//            $loans, /* query NOT result */
-//            $request->query->getInt('page', 1)/*page number*/,
-//            7/*limit per page*/
-//        );
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $loans, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            7/*limit per page*/
+        );
 
         return $this->render('loan/loanComplete.html.twig', array(
-            'areaId'=>$areaId,
-            'loans'=>$loans,
+            'areaId' => $areaId,
+            'loans' => $pagination,
         ));
     }
 }

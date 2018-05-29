@@ -69,16 +69,17 @@
                                     <td>{{ loan.lastInstallmentAmount }}</td>
                                     <td>{{ loan.period }}</td>
                                     <td><a class="btn btn-default btn-xs"
-                                           href="{{ path('loanView', {'areaId':areaId, 'loanId':loan.id}) }}">View</a></td>
+                                           href="{{ path('loanView', {'areaId':areaId, 'loanId':loan.id}) }}">View</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                {#<div class="navigation">#}
-                {#{{ knp_pagination_render(loans) }}#}
-                {#</div>#}
+                <div class="navigation">
+                    {{ knp_pagination_render(loans) }}
+                </div>
             </center>
         </main>
     </div>
