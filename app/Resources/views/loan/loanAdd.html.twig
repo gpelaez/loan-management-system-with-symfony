@@ -14,10 +14,6 @@
     {{ parent() }}
 {% endblock %}
 
-{% block breadcrumb %}
-    {{ parent() }}
-{% endblock %}
-
 {% block body %}
     {{ parent() }}
 
@@ -27,9 +23,142 @@
                 <h3>Add Loans</h3>
                 <div class="container">
                     <div>
-                        {{ form_start(form) }}
-                        {{ form_widget(form) }}
-                        {{ form_end(form) }}
+                        <form class="form-horizontal" method="post" action="{{ path('loanAdd', {'areaId':areaId}) }}">
+                            <hr>
+                            <h4>Customer</h4>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="customerName">Customer Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="customerName" placeholder="Customer Name" name="customerName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="customerNic">Customer NIC</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="customerNic" placeholder="Customer NIC" name="customerNic">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="customerAddress">Customer Address</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="customerAddress" placeholder="Customer Address" name="customerAddress">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="customerMobile">Customer Mobile</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="customerMobile" placeholder="Customer Mobile" name="customerMobile">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="customerFixed">Customer Fixed</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="customerFixed" placeholder="Customer Fixed" name="customerFixed">
+                                </div>
+                            </div>
+                            <hr>
+                            <h4>Loan</h4>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="loanAmount">Loan Amount</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="loanAmount" placeholder="Loan Amount" name="loanAmount">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="loanCode">Loan Code</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="loanCode" placeholder="Loan Code" name="loanCode">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="loanStartedDate">Loan Started Date</label>
+                                <div class="col-sm-10">
+                                    <input type="date" class="form-control" id="loanStartedDate" placeholder="Loan Started Date" name="loanStartedDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="loanInterest">Loan Interest</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="loanInterest" placeholder="Loan Interest" name="loanInterest" step="any">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="loanPeriod">Loan Period</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="loanPeriod" placeholder="Loan Period" name="loanPeriod">
+                                </div>
+                            </div>
+                            <hr>
+                            <h4>Witnesses</h4>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness1Name">Witness 1 Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness1Name" placeholder="Witness 1 Name" name="witness1Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness1Nic">Witness 1 NIC</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness1Nic" placeholder="Witness 1 NIC" name="witness1Nic">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness1Address">Witness 1 Address</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness1Address" placeholder="Witness 1 Address" name="witness1Address">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness1Mobile">Witness 1 Mobile</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness1Mobile" placeholder="Witness 1 Mobile" name="witness1Mobile">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness1Fixed">Witness 1 Fixed</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness1Fixed" placeholder="Witness 1 Fixed" name="witness1Fixed">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness2Name">Witness 2 Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness2Name" placeholder="Witness 2 Name" name="witness2Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness2Nic">Witness 2 NIC</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness2Nic" placeholder="Witness 2 NIC" name="witness2Nic">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness2Address">Witness 2 Address</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness2Address" placeholder="Witness 2 Address" name="witness2Address">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness2Mobile">Witness 2 Mobile</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness2Mobile" placeholder="Witness 2 Mobile" name="witness2Mobile">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="witness2Fixed">Witness 2 Fixed</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="witness2Fixed" placeholder="Witness 2 Fixed" name="witness2Fixed">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-default">Save</button>
+                                </div>
+                            </div>
+                            <hr>
+                        </form>
                     </div>
                 </div>
             </center>
@@ -37,9 +166,7 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-            $('#app_loan_customer').select2();
-        });
+
     </script>
 
 {% endblock %}

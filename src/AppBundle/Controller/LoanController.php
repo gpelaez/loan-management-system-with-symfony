@@ -9,12 +9,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Area;
-use AppBundle\Form\AreaType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Form\LoanType;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Customer;
 use AppBundle\Entity\Witness;
@@ -23,21 +21,22 @@ use AppBundle\Entity\Installment;
 class LoanController extends BaseController
 {
     /**
-     * @Route("/dashboard/area/{id}/loan", name="loan")
+     * @Route("/dashboard/area/{areaId}/loan", name="loan")
      */
-    public function Loan(Request $request, $id)
+    public function Loan(Request $request, $areaId)
     {
-        $area = $this->getDoctrine()
-            ->getRepository(Area::class)
-            ->find($id);
-
-        if (!$area) {
-            throw $this->createNotFoundException(
-                'No Area Found !'
-            );
+        $search = $request->get('search');
+        if ($search) {
+            $loans = $this->getDoctrine()
+                ->getRepository(Loan::class)
+                ->findLoansBySearch($areaId, $search);
+        } else {
+            $loans = $this->getDoctrine()
+                ->getRepository(Loan::class)
+                ->findLoansByAreaId($areaId);
         }
 
-        foreach ($area->getLoans() as $loan) {
+        foreach ($loans as $loan) {
 
             $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
 
@@ -85,19 +84,6 @@ class LoanController extends BaseController
             $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
         }
 
-//        $form = $this->createForm(AreaType::class, $area);
-//
-//        $form->handleRequest($request);
-//        if ($form->isSubmitted() & $form->isValid()) {
-//
-//            $entityManager = $this->getDoctrine()->getManager();
-//            $entityManager->persist($area);
-//            $entityManager->flush();
-//
-//            return $this->redirectToRoute('loan', array('id' => $id));
-//
-//        }
-
 //        $paginator  = $this->get('knp_paginator');
 //        $pagination = $paginator->paginate(
 //            $loans, /* query NOT result */
@@ -106,8 +92,8 @@ class LoanController extends BaseController
 //        );
 
         return $this->render('loan/loan.html.twig', array(
-//            'form' => $form->createView(),
-            'area'=>$area,
+            'areaId'=>$areaId,
+            'loans'=>$loans,
         ));
     }
 
@@ -116,14 +102,14 @@ class LoanController extends BaseController
      */
     public function loanUpdate(Request $request)
     {
-        $id = $request->request->get('id');
+        $loanId = $request->request->get('loanId');
         $installmentAmount = $request->request->get('installmentAmount');
 
-        if($id & $installmentAmount){
+        if($loanId & $installmentAmount){
 
             $loan = $this->getDoctrine()
                 ->getRepository(Loan::class)
-                ->find($id);
+                ->find($loanId);
 
             if (!$loan) {
                 throw $this->createNotFoundException(
@@ -139,7 +125,6 @@ class LoanController extends BaseController
             $entityManager->persist($loan);
             $entityManager->persist($installment);
             $entityManager->flush();
-
 
 
             $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
@@ -201,13 +186,13 @@ class LoanController extends BaseController
     }
 
     /**
-     * @Route("/dashboard/loan/view/{id}", name="loanView")
+     * @Route("/dashboard/area/{areaId}/loan/view/{loanId}", name="loanView")
      */
-    public function loanView(Request $request, $id)
+    public function loanView(Request $request, $areaId, $loanId)
     {
         $loan = $this->getDoctrine()
             ->getRepository(Loan::class)
-            ->find($id);
+            ->find($loanId);
 
         if (!$loan) {
             throw $this->createNotFoundException(
@@ -250,14 +235,9 @@ class LoanController extends BaseController
 
         $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
 
-        $breadcrumbArray = array(
-            array('Dashboard' , 'dashboard', ''),
-            array('Loan' , 'loan', ''),
-            array('View', '', ''),
-            array($loan->getLoanCode() , '', ''),
-        );
-
         return $this->render('loan/loanView.html.twig', array(
+            'areaId'=>$areaId,
+            'loanId'=>$loanId,
             'loan'=>$loan,
             'totalAmount'=>$totalAmount,
             'weeklyPayment'=>$weeklyPayment,
@@ -267,120 +247,355 @@ class LoanController extends BaseController
             'areasAmountDates'=>$areasAmountDates,
             'lastInstallmentAmount'=>$lastInstallmentAmount,
             'lastInstallmentAmountDates'=>$lastInstallmentAmountDates,
-            'breadcrumbArray'=>$breadcrumbArray,
         ));
     }
 
     /**
-     * @Route("/dashboard/loan/edit/{id}", name="loanEdit")
+     * @Route("/dashboard/area/{areaId}/loan/edit/{loanId}", name="loanEdit")
      */
-    public function loanEdit(Request $request, $id)
+    public function loanEdit(Request $request, $areaId, $loanId)
     {
         $loan = $this->getDoctrine()
             ->getRepository(Loan::class)
-            ->find($id);
+            ->find($loanId);
 
         if (!$loan) {
             throw $this->createNotFoundException(
-                'No loan found !'
+                'No Loan Found !'
             );
         }
 
-        $form = $this->createForm(new LoanType(), $loan);
+        if ($request->isMethod('post')) {
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() & $form->isValid()) {
+            $customerName = $request->get('customerName');
+            $customerNic = $request->get('customerNic');
+            $customerAddress = $request->get('customerAddress');
+            $customerMobile = $request->get('customerMobile');
+            $customerFixed = $request->get('customerFixed');
+
+            $loanAmount = $request->get('loanAmount');
+            $loanCode = $request->get('loanCode');
+            $loanStartedDate = $request->get('loanStartedDate');
+            $loanInterest = $request->get('loanInterest');
+            $loanPeriod = $request->get('loanPeriod');
+
+            $witness1Name = $request->get('witness1Name');
+            $witness1Nic = $request->get('witness1Nic');
+            $witness1Address = $request->get('witness1Address');
+            $witness1Mobile = $request->get('witness1Mobile');
+            $witness1Fixed = $request->get('witness1Fixed');
+
+            $witness2Name = $request->get('witness2Name');
+            $witness2Nic = $request->get('witness2Nic');
+            $witness2Address = $request->get('witness2Address');
+            $witness2Mobile = $request->get('witness2Mobile');
+            $witness2Fixed = $request->get('witness2Fixed');
+
+            $customer = $this->getDoctrine()
+                ->getRepository(Customer::class)
+                ->findCustomerByNic($customerNic);
+
+            if (!$customer) {
+                $customer = new Customer();
+            }
+
+            $customer->setName($customerName);
+            $customer->setNic($customerNic);
+            $customer->setAddress($customerAddress);
+            $customer->setMobile($customerMobile);
+            $customer->setFixed($customerFixed);
+
+            $witness1 = $this->getDoctrine()
+                ->getRepository(Witness::class)
+                ->findWitnessByNic($witness1Nic);
+
+            if (!$witness1) {
+                $witness1 = new Witness();
+            }
+
+            $witness1->setName($witness1Name);
+            $witness1->setNic($witness1Nic);
+            $witness1->setAddress($witness1Address);
+            $witness1->setMobile($witness1Mobile);
+            $witness1->setFixed($witness1Fixed);
+
+            $witness2 = $this->getDoctrine()
+                ->getRepository(Witness::class)
+                ->findWitnessByNic($witness2Nic);
+
+            if (!$witness2) {
+                $witness2 = new Witness();
+            }
+
+            $witness2->setName($witness2Name);
+            $witness2->setNic($witness2Nic);
+            $witness2->setAddress($witness2Address);
+            $witness2->setMobile($witness2Mobile);
+            $witness2->setFixed($witness2Fixed);
+
+            $loan->setLoanAmount($loanAmount);
+            $loan->setLoanCode($loanCode);
+            $loan->setStartedDate(new \DateTime($loanStartedDate));
+            $loan->setInterest($loanInterest);
+            $loan->setPeriod($loanPeriod);
+            $loan->setCustomer($customer);
+            $loan->witnesses[0] = $witness1;
+            $loan->witnesses[1] = $witness2;
 
             $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($customer);
+            $entityManager->persist($witness1);
+            $entityManager->persist($witness2);
             $entityManager->persist($loan);
             $entityManager->flush();
 
-            return $this->redirectToRoute('loanEdit', array('id' => $loan->getId()));
+            return $this->redirectToRoute('loanEdit', array(
+                'areaId'=>$areaId,
+                'loanId'=>$loanId,
+            ));
         }
 
-        $breadcrumbArray = array(
-            array('Dashboard' , 'dashboard', ''),
-            array('Loan' , 'loan', ''),
-            array('Edit', '', ''),
-            array($loan->getLoanCode() , '', ''),
-        );
+        $customerName = $loan->getCustomer()->getName();
+        $customerNic = $loan->getCustomer()->getNic();
+        $customerAddress = $loan->getCustomer()->getAddress();
+        $customerMobile = $loan->getCustomer()->getMobile();
+        $customerFixed = $loan->getCustomer()->getFixed();
+
+        $loanAmount = $loan->getLoanAmount();
+        $loanCode = $loan->getLoanCode();
+        $loanStartedDate = $loan->getStartedDate();
+        $loanInterest = $loan->getInterest();
+        $loanPeriod = $loan->getPeriod();
+
+        $witness1Name = $loan->getWitnesses()[0]->getName();
+        $witness1Nic = $loan->getWitnesses()[0]->getNic();
+        $witness1Address = $loan->getWitnesses()[0]->getAddress();
+        $witness1Mobile = $loan->getWitnesses()[0]->getMobile();
+        $witness1Fixed = $loan->getWitnesses()[0]->getFixed();
+
+        $witness2Name = $loan->getWitnesses()[1]->getName();
+        $witness2Nic = $loan->getWitnesses()[1]->getNic();
+        $witness2Address = $loan->getWitnesses()[1]->getAddress();
+        $witness2Mobile = $loan->getWitnesses()[1]->getMobile();
+        $witness2Fixed = $loan->getWitnesses()[1]->getFixed();
 
         return $this->render('loan/loanEdit.html.twig', array(
-            'form' => $form->createView(),
-            'breadcrumbArray'=>$breadcrumbArray,
+            'areaId'=>$areaId,
+
+            'customerName'=>$customerName,
+            'customerNic'=>$customerNic,
+            'customerAddress'=>$customerAddress,
+            'customerMobile'=>$customerMobile,
+            'customerFixed'=>$customerFixed,
+
+            'loanId'=>$loanId,
+            'loanAmount'=>$loanAmount,
+            'loanCode'=>$loanCode,
+            'loanStartedDate'=>$loanStartedDate,
+            'loanInterest'=>$loanInterest,
+            'loanPeriod'=>$loanPeriod,
+
+            'witness1Name'=>$witness1Name,
+            'witness1Nic'=>$witness1Nic,
+            'witness1Address'=>$witness1Address,
+            'witness1Mobile'=>$witness1Mobile,
+            'witness1Fixed'=>$witness1Fixed,
+
+            'witness2Name'=>$witness2Name,
+            'witness2Nic'=>$witness2Nic,
+            'witness2Address'=>$witness2Address,
+            'witness2Mobile'=>$witness2Mobile,
+            'witness2Fixed'=>$witness2Fixed,
         ));
     }
 
     /**
-     * @Route("/dashboard/loan/add", name="loanAdd")
+     * @Route("/dashboard/area/{areaId}/loan/add", name="loanAdd")
      */
-    public function loanAdd(Request $request)
+    public function loanAdd(Request $request, $areaId)
     {
-        $loan = new Loan();
-        $form = $this->createForm(new LoanType(), $loan);
+        if ($request->isMethod('post')) {
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() & $form->isValid()) {
+            $area = $this->getDoctrine()
+                ->getRepository(Area::class)
+                ->find($areaId);
+
+            if (!$area) {
+                throw $this->createNotFoundException(
+                    'No Area Found !'
+                );
+            }
+
+            $customerName = $request->get('customerName');
+            $customerNic = $request->get('customerNic');
+            $customerAddress = $request->get('customerAddress');
+            $customerMobile = $request->get('customerMobile');
+            $customerFixed = $request->get('customerFixed');
+
+            $loanAmount = $request->get('loanAmount');
+            $loanCode = $request->get('loanCode');
+            $loanStartedDate = $request->get('loanStartedDate');
+            $loanInterest = $request->get('loanInterest');
+            $loanPeriod = $request->get('loanPeriod');
+
+            $witness1Name = $request->get('witness1Name');
+            $witness1Nic = $request->get('witness1Nic');
+            $witness1Address = $request->get('witness1Address');
+            $witness1Mobile = $request->get('witness1Mobile');
+            $witness1Fixed = $request->get('witness1Fixed');
+
+            $witness2Name = $request->get('witness2Name');
+            $witness2Nic = $request->get('witness2Nic');
+            $witness2Address = $request->get('witness2Address');
+            $witness2Mobile = $request->get('witness2Mobile');
+            $witness2Fixed = $request->get('witness2Fixed');
+
+            $customer = $this->getDoctrine()
+                ->getRepository(Customer::class)
+                ->findCustomerByNic($customerNic);
+
+            if (!$customer) {
+                $customer = new Customer();
+            }
+
+            $customer->setName($customerName);
+            $customer->setNic($customerNic);
+            $customer->setAddress($customerAddress);
+            $customer->setMobile($customerMobile);
+            $customer->setFixed($customerFixed);
+
+            $witness1 = $this->getDoctrine()
+                ->getRepository(Witness::class)
+                ->findWitnessByNic($witness1Nic);
+
+            if (!$witness1) {
+                $witness1 = new Witness();
+            }
+
+            $witness1->setName($witness1Name);
+            $witness1->setNic($witness1Nic);
+            $witness1->setAddress($witness1Address);
+            $witness1->setMobile($witness1Mobile);
+            $witness1->setFixed($witness1Fixed);
+
+            $witness2 = $this->getDoctrine()
+                ->getRepository(Witness::class)
+                ->findWitnessByNic($witness2Nic);
+
+            if (!$witness2) {
+                $witness2 = new Witness();
+            }
+
+            $witness2->setName($witness2Name);
+            $witness2->setNic($witness2Nic);
+            $witness2->setAddress($witness2Address);
+            $witness2->setMobile($witness2Mobile);
+            $witness2->setFixed($witness2Fixed);
+
+            $loan = new Loan();
+            $loan->setLoanAmount($loanAmount);
+            $loan->setLoanCode($loanCode);
+            $loan->setStartedDate(new \DateTime($loanStartedDate));
+            $loan->setInterest($loanInterest);
+            $loan->setPeriod($loanPeriod);
+            $loan->setArea($area);
+            $loan->setCustomer($customer);
+            $loan->addWitness($witness1);
+            $loan->addWitness($witness2);
+
 
             $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($area);
+            $entityManager->persist($customer);
+            $entityManager->persist($witness1);
+            $entityManager->persist($witness2);
             $entityManager->persist($loan);
             $entityManager->flush();
 
-            return $this->redirectToRoute('loanAdd');
+            return $this->redirectToRoute('loanAdd', array(
+                'areaId'=>$areaId,
+            ));
         }
 
-        $breadcrumbArray = array(
-            array('Dashboard' , 'dashboard', ''),
-            array('Loan' , 'loan', ''),
-            array('Add', '', ''),
-        );
-
         return $this->render('loan/loanAdd.html.twig', array(
-            'form' => $form->createView(),
-            'breadcrumbArray'=>$breadcrumbArray,
+            'areaId'=>$areaId,
         ));
     }
 
     /**
-     * @Route("/dashboard/loan/complete", name="loanComplete")
+     * @Route("/dashboard/area/{areaId}/loan/complete", name="loanComplete")
      */
-    public function loanComplete(Request $request)
+    public function loanComplete(Request $request, $areaId)
     {
         $search = $request->get('search');
-
-        if($search) {
+        if ($search) {
             $loans = $this->getDoctrine()
                 ->getRepository(Loan::class)
-                ->findByCompleteLoanSearch($search);
-            $breadcrumbArray = array(
-                array('Dashboard' , 'dashboard', ''),
-                array('Loan' , 'loan', ''),
-                array('Complete' , '', ''),
-            );
-        }
-        else {
+                ->findCompletedLoansBySearch($areaId, $search);
+        } else {
             $loans = $this->getDoctrine()
                 ->getRepository(Loan::class)
-                ->findBy(array(
-                    'isComplete'=>1
-                ));
-            $breadcrumbArray = array(
-                array('Dashboard' , 'dashboard', ''),
-                array('Loan' , 'loan', ''),
-                array('Complete' , '', ''),
-            );
+                ->findCompletedLoansByAreaId($areaId);
         }
 
-        $paginator  = $this->get('knp_paginator');
-        $pagination = $paginator->paginate(
-            $loans, /* query NOT result */
-            $request->query->getInt('page', 1)/*page number*/,
-            7/*limit per page*/
-        );
+        foreach ($loans as $loan) {
+
+            $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
+
+            $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
+
+            $weeklyPayment = $amountPerDay * 7;
+
+            $totalPayment = 0;
+            foreach($loan->getInstallments() as $installment)
+            {
+                $totalPayment += $installment->getInstallmentAmount();
+            }
+
+            $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
+
+            $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
+
+            $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
+
+            $areasAmountDates = round($areasAmount/$amountPerDay, 2);
+
+            $installments = $this->getDoctrine()
+                ->getRepository(Installment::class)
+                ->findBy(
+                    array('loan'=>$loan),
+                    array('paymentDate' => 'DESC')
+                );
+
+            $lastInstallmentAmount=0;
+
+            if($installments) {
+                $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
+            }
+
+            $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
+
+
+            $loan->setTotalAmount($totalAmount);
+            $loan->setWeeklyPayment($weeklyPayment);
+            $loan->setTotalPayment($totalPayment);
+            $loan->setTotalPaymentDates($totalPaymentDates);
+            $loan->setAreasAmount($areasAmount);
+            $loan->setAreasAmountDates($areasAmountDates);
+            $loan->setLastInstallmentAmount($lastInstallmentAmount);
+            $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
+        }
+
+//        $paginator  = $this->get('knp_paginator');
+//        $pagination = $paginator->paginate(
+//            $loans, /* query NOT result */
+//            $request->query->getInt('page', 1)/*page number*/,
+//            7/*limit per page*/
+//        );
 
         return $this->render('loan/loanComplete.html.twig', array(
-            'loans'=>$pagination,
-            'breadcrumbArray'=>$breadcrumbArray,
+            'areaId'=>$areaId,
+            'loans'=>$loans,
         ));
     }
 }

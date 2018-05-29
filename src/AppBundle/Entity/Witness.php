@@ -71,8 +71,7 @@ class Witness
 
     /**
      * Many Witnesses have Many Loans.
-     * @ORM\ManyToMany(targetEntity="Loan", inversedBy="witnesses")
-     * @ORM\JoinTable(name="loans_witnesses")
+     * @ORM\ManyToMany(targetEntity="Loan", mappedBy="witnesses")
      */
     private $loans;
 

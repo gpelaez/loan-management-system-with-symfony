@@ -33,18 +33,6 @@
     </nav>
 </div>
 
-{% block breadcrumb %}
-    {% if breadcrumbArray is defined %}
-        <ol class="breadcrumb">
-            {% for item in breadcrumbArray %}
-                <li class="breadcrumb-item"><a style="text-decoration: none"
-                                               href="{% if item[1] %}{{ path(item[1], {'id': item[2]}) }}{% else %}{{ '#' }}{% endif %}">{{ item[0] }}</a>
-                </li>
-            {% endfor %}
-        </ol>
-    {% endif %}
-{% endblock %}
-
 {% block body %}
 
 {% endblock %}

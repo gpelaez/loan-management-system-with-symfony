@@ -47,32 +47,18 @@
 <div class="navbar-primary">
     <ul class="navbar-primary-menu">
         <li>
-            <a href="">Close X</a>
-            <a href=""><span class="glyphicon glyphicon-user"></span><span
-                        class="nav-label">Customers</span></a>
-            <a href=""><span class="glyphicon glyphicon-list-alt"></span><span
-                        class="nav-label">Loans</span></a>
-            <a href=""><span class="glyphicon glyphicon-eye-close"></span><span
-                        class="nav-label">Witnesses</span></a>
-            <a href=""><span class="glyphicon glyphicon-stats"></span><span
-                        class="nav-label">Installments</span></a>
-            <a href=""><span class="glyphicon glyphicon-cog"></span><span
+            <a href="#">Close X</a>
+            <a href="{{ path('loan', {'areaId':1}) }}"><span class="glyphicon glyphicon-list-alt"></span><span
+                        class="nav-label">Area-01</span></a>
+            <a href="{{ path('loan', {'areaId':2}) }}"><span class="glyphicon glyphicon-list-alt"></span><span
+                        class="nav-label">Area-02</span></a>
+            <a href="{{ path('loan', {'areaId':3}) }}"><span class="glyphicon glyphicon-list-alt"></span><span
+                        class="nav-label">Area-03</span></a>
+            <a href="{{ path('adminChangePassword', {'adminId':1}) }}"><span class="glyphicon glyphicon-list-alt"></span><span
                         class="nav-label">Admin</span></a>
         </li>
     </ul>
 </div>
-
-{% block breadcrumb %}
-    {% if breadcrumbArray is defined %}
-        <ol class="breadcrumb">
-            {% for item in breadcrumbArray %}
-                <li class="breadcrumb-item"><a style="text-decoration: none"
-                                               href="{% if item[1] %}{{ path(item[1], {'id': item[2]}) }}{% else %}{{ '#' }}{% endif %}">{{ item[0] }}</a>
-                </li>
-            {% endfor %}
-        </ol>
-    {% endif %}
-{% endblock %}
 
 {% block body %}
 

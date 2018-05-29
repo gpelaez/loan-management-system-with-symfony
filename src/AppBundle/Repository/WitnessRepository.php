@@ -10,5 +10,12 @@ namespace AppBundle\Repository;
  */
 class WitnessRepository extends \Doctrine\ORM\EntityRepository
 {
-
+    public function findWitnessByNic($witnessNic){
+        return $this->createQueryBuilder('w')
+            ->where('w.nic = :witnessNic')
+            ->setParameter('witnessNic', $witnessNic)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+    }
 }

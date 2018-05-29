@@ -12,10 +12,10 @@
 
 {% block navblock %}
     {{ parent() }}
-{% endblock %}
 
-{% block breadcrumb %}
-    {{ parent() }}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ path('loanEdit', {'areaId':areaId, 'loanId':loanId}) }}">Edit Loan</a></li>
+    </ul>
 {% endblock %}
 
 {% block body %}

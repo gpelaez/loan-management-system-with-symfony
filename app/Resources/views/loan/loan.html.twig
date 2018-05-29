@@ -13,7 +13,7 @@
 {% block navblock %}
     {{ parent() }}
 
-    <form class="nav navbar-form navbar-left" action="" method="post">
+    <form class="nav navbar-form navbar-left" action="{{ path('loan', {'areaId':areaId}) }}" method="post">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Search Loans" name="search">
             <div class="input-group-btn">
@@ -24,14 +24,10 @@
         </div>
     </form>
     <ul class="nav navbar-nav navbar-right">
-        <li><a href={{ path('loanComplete') }}>Completed Loans</a></li>
-        <li><a href={{ path('loanAdd') }}>Add Loans</a></li>
+        <li><a href="{{ path('loanComplete', {'areaId':areaId}) }}">Completed Loans</a></li>
+        <li><a href="{{ path('loanAdd', {'areaId':areaId}) }}">Add Loans</a></li>
     </ul>
 
-{% endblock %}
-
-{% block breadcrumb %}
-    {{ parent() }}
 {% endblock %}
 
 {% block body %}
@@ -51,45 +47,38 @@
                                 <th>Customer Name</th>
                                 <th>Customer Nic</th>
                                 <th>Loan Amount</th>
-                                <th>Total Amount</th>
+                                {#<th>Total Amount</th>#}
                                 <th>Started Date</th>
                                 <th>Weekly Payment</th>
                                 <th>Total Payment</th>
                                 <th>Areas Amount</th>
                                 <th>Last Installment</th>
-                                {#<th>Interest</th>#}
-                                {#<th>Period</th>#}
-                                {#<th>isComplete</th>#}
-                                {#<th>Area</th>#}
-                                {#<th></th>#}
+                                <th>Period</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% for loan in area.loans %}
+                            {% for loan in loans %}
                                 <tr>
                                     <td>{{ loop.index }}</td>
                                     <td>{{ loan.loanCode }}</td>
                                     <td>{{ loan.customer.name }}</td>
                                     <td>{{ loan.customer.nic }}</td>
                                     <td>{{ loan.loanAmount }}</td>
-                                    <td>{{ loan.totalAmount }}</td>
+                                    {#<td>{{ loan.totalAmount }}</td>#}
                                     <td>{{ loan.startedDate|date('Y-m-d') }}</td>
                                     <td>{{ loan.weeklyPayment }}</td>
                                     <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }}</td>
                                     <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }}</td>
                                     <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment" loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }}</td>
-                                    {#<td>{{ form(loan.interest) }}</td>#}
-                                    {#<td>{{ form(loan.period) }}</td>#}
-                                    {#<td>{{ form(loan.isComplete) }}</td>#}
-                                    {#<td>{{ form(loan.area) }}</td>#}
-                                    {#<td><a class="btn btn-default btn-xs"#}
-                                           {#href="">View</a></td>#}
+                                    <td>{{ loan.period }}</td>
+                                    <td><a class="btn btn-default btn-xs"
+                                           href="{{ path('loanView', {'areaId':areaId, 'loanId':loan.id}) }}">View</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
-                    {#<div>{{ form_row(form.save) }}</div>#}
                 </div>
                 {#<div class="navigation">#}
                 {#{{ knp_pagination_render(loans) }}#}
