@@ -29,31 +29,31 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="customerName">Customer Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="customerName" placeholder="Customer Name" name="customerName">
+                                    <input type="text" class="form-control" id="customerName" placeholder="Customer Name" name="customerName" value="{{ customerName }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="customerNic">Customer NIC</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="customerNic" placeholder="Customer NIC" name="customerNic">
+                                    <input type="text" class="form-control" id="customerNic" placeholder="Customer NIC" name="customerNic" value="{{ customerNic }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="customerAddress">Customer Address</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="customerAddress" placeholder="Customer Address" name="customerAddress">
+                                    <input type="text" class="form-control" id="customerAddress" placeholder="Customer Address" name="customerAddress" value="{{ customerAddress }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="customerMobile">Customer Mobile</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="customerMobile" placeholder="Customer Mobile" name="customerMobile">
+                                    <input type="text" class="form-control" id="customerMobile" placeholder="Customer Mobile" name="customerMobile" value="{{ customerMobile }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="customerFixed">Customer Fixed</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="customerFixed" placeholder="Customer Fixed" name="customerFixed">
+                                    <input type="text" class="form-control" id="customerFixed" placeholder="Customer Fixed" name="customerFixed" value="{{ customerFixed }}">
                                 </div>
                             </div>
                             <hr>
@@ -61,31 +61,37 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="loanAmount">Loan Amount</label>
                                 <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="loanAmount" placeholder="Loan Amount" name="loanAmount">
+                                    <input type="number" class="form-control" id="loanAmount" placeholder="Loan Amount" name="loanAmount" value="{{ loanAmount }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="loanCode">Loan Code</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="loanCode" placeholder="Loan Code" name="loanCode">
+                                    <input type="text" class="form-control" id="loanCode" placeholder="Loan Code" name="loanCode" value="{{ loanCode }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="loanStartedDate">Loan Started Date</label>
                                 <div class="col-sm-10">
-                                    <input type="date" class="form-control" id="loanStartedDate" placeholder="Loan Started Date" name="loanStartedDate">
+                                    <input type="date" class="form-control" id="loanStartedDate" placeholder="Loan Started Date" name="loanStartedDate" value="{{ loanStartedDate|date('Y-m-d') }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="loanInterest">Loan Interest</label>
                                 <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="loanInterest" placeholder="Loan Interest" name="loanInterest" step="any">
+                                    <input type="number" class="form-control" id="loanInterest" placeholder="Loan Interest" name="loanInterest" step="any" value="{{ loanInterest }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="loanPeriod">Loan Period</label>
                                 <div class="col-sm-10">
-                                    <input type="number" class="form-control" id="loanPeriod" placeholder="Loan Period" name="loanPeriod">
+                                    <input type="number" class="form-control" id="loanPeriod" placeholder="Loan Period" name="loanPeriod" value="{{ loanPeriod }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="loanIsComplete">Loan IsComplete</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="loanIsComplete" placeholder="Loan IsComplete" name="loanIsComplete" value="{{ loanIsComplete }}">
                                 </div>
                             </div>
                             <hr>
@@ -93,62 +99,62 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness1Name">Witness 1 Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness1Name" placeholder="Witness 1 Name" name="witness1Name">
+                                    <input type="text" class="form-control" id="witness1Name" placeholder="Witness 1 Name" name="witness1Name" value="{{ witness1Name }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness1Nic">Witness 1 NIC</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness1Nic" placeholder="Witness 1 NIC" name="witness1Nic">
+                                    <input type="text" class="form-control" id="witness1Nic" placeholder="Witness 1 NIC" name="witness1Nic" value="{{ witness1Nic }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness1Address">Witness 1 Address</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness1Address" placeholder="Witness 1 Address" name="witness1Address">
+                                    <input type="text" class="form-control" id="witness1Address" placeholder="Witness 1 Address" name="witness1Address" value="{{ witness1Address }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness1Mobile">Witness 1 Mobile</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness1Mobile" placeholder="Witness 1 Mobile" name="witness1Mobile">
+                                    <input type="text" class="form-control" id="witness1Mobile" placeholder="Witness 1 Mobile" name="witness1Mobile" value="{{ witness1Mobile }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness1Fixed">Witness 1 Fixed</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness1Fixed" placeholder="Witness 1 Fixed" name="witness1Fixed">
+                                    <input type="text" class="form-control" id="witness1Fixed" placeholder="Witness 1 Fixed" name="witness1Fixed" value="{{ witness1Fixed }}">
                                 </div>
                             </div>
                             <br>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness2Name">Witness 2 Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness2Name" placeholder="Witness 2 Name" name="witness2Name">
+                                    <input type="text" class="form-control" id="witness2Name" placeholder="Witness 2 Name" name="witness2Name" value="{{ witness2Name }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness2Nic">Witness 2 NIC</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness2Nic" placeholder="Witness 2 NIC" name="witness2Nic">
+                                    <input type="text" class="form-control" id="witness2Nic" placeholder="Witness 2 NIC" name="witness2Nic" value="{{ witness2Nic }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness2Address">Witness 2 Address</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness2Address" placeholder="Witness 2 Address" name="witness2Address">
+                                    <input type="text" class="form-control" id="witness2Address" placeholder="Witness 2 Address" name="witness2Address" value="{{ witness2Address }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness2Mobile">Witness 2 Mobile</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness2Mobile" placeholder="Witness 2 Mobile" name="witness2Mobile">
+                                    <input type="text" class="form-control" id="witness2Mobile" placeholder="Witness 2 Mobile" name="witness2Mobile" value="{{ witness2Mobile }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-2" for="witness2Fixed">Witness 2 Fixed</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="witness2Fixed" placeholder="Witness 2 Fixed" name="witness2Fixed">
+                                    <input type="text" class="form-control" id="witness2Fixed" placeholder="Witness 2 Fixed" name="witness2Fixed" value="{{ witness2Fixed }}">
                                 </div>
                             </div>
                             <hr>

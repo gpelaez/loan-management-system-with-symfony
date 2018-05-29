@@ -68,8 +68,8 @@
                                     {#<td>{{ loan.totalAmount }}</td>#}
                                     <td>{{ loan.startedDate|date('Y-m-d') }}</td>
                                     <td>{{ loan.weeklyPayment }}</td>
-                                    <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }}</td>
-                                    <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }}</td>
+                                    <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }} ({{ loan.totalPaymentDates }})</td>
+                                    <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }} ({{ loan.areasAmountDates }})</td>
                                     <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment" loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }}</td>
                                     <td>{{ loan.period }}</td>
                                     <td><a class="btn btn-default btn-xs"
@@ -90,27 +90,25 @@
     <script>
         $(document).ready(function(){
 
-            // $.fn.editable.defaults.mode = 'inline';
+            $.fn.editable.defaults.mode = 'inline';
             $('.add-installment').editable({
                 type: 'text',
                 savenochange: true,
                 success: function(k,v){
                     var loanId = $(this).attr("loanId");
-                    // $('.name-list '+href).html(v);
 
                     $.ajax({
-                        url:'{{ path('loanUpdate') }}',
+                        url:"/dashboard/loan/" + loanId + "/add-installment/" + v,
                         type: "POST",
                         dataType: "json",
                         data: {
-                            "id": loanId,
-                            "installmentAmount":v
+
                         },
                         async: true,
                         success: function (data)
                         {
-                            $('#'+loanId+'-totalPayment').html(data.totalPayment);
-                            $('#'+loanId+'-areasAmount').html(data.areasAmount);
+                            $('#'+loanId+'-totalPayment').html(data.totalPayment + " (" + data.totalPaymentDates + ")");
+                            $('#'+loanId+'-areasAmount').html(data.areasAmount + " (" + data.areasAmountDates + ")");
                             $('#'+loanId+'-lastInstallmentAmount').html(data.lastInstallmentAmount);
                             alert("Successfully Added !");
 

@@ -585,6 +585,28 @@ class Loan
     }
 
     /**
+     * @param Witness|null $witness
+     * @return $this
+     */
+    public function setFirstWitness(Witness $witness = null)
+    {
+        $this->witnesses[0] = $witness;
+
+        return $this;
+    }
+
+    /**
+     * @param Witness|null $witness
+     * @return $this
+     */
+    public function setSecondWitness(Witness $witness = null)
+    {
+        $this->witnesses[1] = $witness;
+
+        return $this;
+    }
+
+    /**
      * Set area
      *
      * @param \AppBundle\Entity\Area $area

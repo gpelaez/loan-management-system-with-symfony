@@ -98,91 +98,85 @@ class LoanController extends BaseController
     }
 
     /**
-     * @Route("/dashboard/loan/update", name="loanUpdate")
+     * @Route("/dashboard/loan/{loanId}/add-installment/{installmentAmount}", name="addInstallment")
      */
-    public function loanUpdate(Request $request)
+    public function addInstallment(Request $request, $loanId, $installmentAmount)
     {
-        $loanId = $request->request->get('loanId');
-        $installmentAmount = $request->request->get('installmentAmount');
+        $loan = $this->getDoctrine()
+            ->getRepository(Loan::class)
+            ->find($loanId);
 
-        if($loanId & $installmentAmount){
-
-            $loan = $this->getDoctrine()
-                ->getRepository(Loan::class)
-                ->find($loanId);
-
-            if (!$loan) {
-                throw $this->createNotFoundException(
-                    'No Loan Found !'
-                );
-            }
-
-            $installment = new Installment();
-            $installment->setInstallmentAmount($installmentAmount);
-            $installment->setLoan($loan);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($loan);
-            $entityManager->persist($installment);
-            $entityManager->flush();
-
-
-            $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
-
-            $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
-
-            $weeklyPayment = $amountPerDay * 7;
-
-            $totalPayment = 0;
-            foreach($loan->getInstallments() as $installment)
-            {
-                $totalPayment += $installment->getInstallmentAmount();
-            }
-
-            $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
-
-            $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
-
-            $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
-
-            $areasAmountDates = round($areasAmount/$amountPerDay, 2);
-
-            $installments = $this->getDoctrine()
-                ->getRepository(Installment::class)
-                ->findBy(
-                    array('loan'=>$loan),
-                    array('paymentDate' => 'DESC')
-                );
-
-            $lastInstallmentAmount=0;
-
-            if($installments) {
-                $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
-            }
-
-            $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
-
-
-            $loan->setTotalAmount($totalAmount);
-            $loan->setWeeklyPayment($weeklyPayment);
-            $loan->setTotalPayment($totalPayment);
-            $loan->setTotalPaymentDates($totalPaymentDates);
-            $loan->setAreasAmount($areasAmount);
-            $loan->setAreasAmountDates($areasAmountDates);
-            $loan->setLastInstallmentAmount($lastInstallmentAmount);
-            $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
-
-            $data = array(
-                'totalPayment'=>$loan->getTotalPayment(),
-                'areasAmount'=>$loan->getAreasAmount(),
-                'lastInstallmentAmount'=>$loan->getLastInstallmentAmount(),
+        if (!$loan) {
+            throw $this->createNotFoundException(
+                'No Loan Found !'
             );
-            return new JsonResponse($data);
         }
 
-        return $this->render('loan/loan.html.twig', array(
+        $installment = new Installment();
+        $installment->setInstallmentAmount($installmentAmount);
+        $installment->setPaymentDate(new \DateTime());
+        $installment->setLoan($loan);
 
-        ));
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($installment);
+        $entityManager->flush();
+
+
+        $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2 );
+
+        $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
+
+        $weeklyPayment = $amountPerDay * 7;
+
+        $totalPayment = 0;
+        foreach($loan->getInstallments() as $installment)
+        {
+            $totalPayment += $installment->getInstallmentAmount();
+        }
+
+        $totalPaymentDates = round($totalPayment/$amountPerDay, 2);
+
+        $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
+
+        $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
+
+        $areasAmountDates = round($areasAmount/$amountPerDay, 2);
+
+        $installments = $this->getDoctrine()
+            ->getRepository(Installment::class)
+            ->findBy(
+                array('loan'=>$loan),
+                array('paymentDate' => 'DESC')
+            );
+
+        $lastInstallmentAmount=0;
+
+        if($installments) {
+            $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
+        }
+
+        $lastInstallmentAmountDates =  round($lastInstallmentAmount/$amountPerDay, 2);
+
+
+        $loan->setTotalAmount($totalAmount);
+        $loan->setWeeklyPayment($weeklyPayment);
+        $loan->setTotalPayment($totalPayment);
+        $loan->setTotalPaymentDates($totalPaymentDates);
+        $loan->setAreasAmount($areasAmount);
+        $loan->setAreasAmountDates($areasAmountDates);
+        $loan->setLastInstallmentAmount($lastInstallmentAmount);
+        $loan->setLastInstallmentAmountDates($lastInstallmentAmountDates);
+
+        $data = array(
+            'totalPayment'=>$totalPayment,
+            'totalPaymentDates'=>$totalPaymentDates,
+            'areasAmount'=>$areasAmount,
+            'areasAmountDates'=>$areasAmountDates,
+            'lastInstallmentAmount'=>$lastInstallmentAmount,
+            'lastInstallmentAmountDates'=>$lastInstallmentAmountDates,
+        );
+
+        return new JsonResponse($data);
     }
 
     /**
@@ -278,6 +272,7 @@ class LoanController extends BaseController
             $loanStartedDate = $request->get('loanStartedDate');
             $loanInterest = $request->get('loanInterest');
             $loanPeriod = $request->get('loanPeriod');
+            $loanIsComplete = $request->get('loanIsComplete');
 
             $witness1Name = $request->get('witness1Name');
             $witness1Nic = $request->get('witness1Nic');
@@ -338,9 +333,10 @@ class LoanController extends BaseController
             $loan->setStartedDate(new \DateTime($loanStartedDate));
             $loan->setInterest($loanInterest);
             $loan->setPeriod($loanPeriod);
+            $loan->setIsComplete($loanIsComplete);
             $loan->setCustomer($customer);
-            $loan->witnesses[0] = $witness1;
-            $loan->witnesses[1] = $witness2;
+            $loan->setFirstWitness($witness1);
+            $loan->setSecondWitness($witness2);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($customer);
@@ -366,6 +362,7 @@ class LoanController extends BaseController
         $loanStartedDate = $loan->getStartedDate();
         $loanInterest = $loan->getInterest();
         $loanPeriod = $loan->getPeriod();
+        $loanIsComplete = $loan->getIsComplete();
 
         $witness1Name = $loan->getWitnesses()[0]->getName();
         $witness1Nic = $loan->getWitnesses()[0]->getNic();
@@ -394,6 +391,7 @@ class LoanController extends BaseController
             'loanStartedDate'=>$loanStartedDate,
             'loanInterest'=>$loanInterest,
             'loanPeriod'=>$loanPeriod,
+            'loanIsComplete'=>$loanIsComplete,
 
             'witness1Name'=>$witness1Name,
             'witness1Nic'=>$witness1Nic,

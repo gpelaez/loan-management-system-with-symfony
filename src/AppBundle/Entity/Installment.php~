@@ -100,7 +100,7 @@ class Installment
      *
      * @return Installment
      */
-    public function setInstallmentAmount($installmentAmount)
+    public function setInstallmentAmount($installmentAmount = 0.0)
     {
         $this->installmentAmount = $installmentAmount;
 
