@@ -16,5 +16,5 @@
 /web/bundles/
 !/vendor
 /vendor/*
-!/vendor/.gitkeep
+!/vendor/symfony/symfony/src/Symfony/Bridge/Twig/Resources/views/.gitkeep
 .idea/*
