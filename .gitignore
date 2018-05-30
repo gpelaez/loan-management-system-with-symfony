@@ -16,4 +16,5 @@
 /web/bundles/
 !/vendor
 /vendor/*
+!/vendor/.gitkeep
 .idea/*
