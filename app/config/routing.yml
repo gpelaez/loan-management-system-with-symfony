@@ -4,3 +4,11 @@ app:
 
 logoutLink:
     path: /logout
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+addInstallment:
+    resource: "@AppBundle/Controller/"
+    options:
+        expose: true
