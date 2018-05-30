@@ -79,6 +79,13 @@ class LoanController extends BaseController
 
         $loan = $this->updateLoanByCalculations($loan);
 
+        if ($loan->getTotalPayment() >= $loan->getTotalAmount()) {
+            $loan->setIsComplete(1);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($loan);
+            $entityManager->flush();
+        }
+
         $data = array(
             'totalPayment' => $loan->getTotalPayment(),
             'totalPaymentDates' => $loan->getTotalPaymentDates(),
