@@ -44,7 +44,7 @@ class LoanController extends BaseController
         $pagination = $paginator->paginate(
             $loans, /* query NOT result */
             $request->query->getInt('page', 1)/*page number*/,
-            1/*limit per page*/
+            7/*limit per page*/
         );
 
         return $this->render('loan/loan.html.twig', array(
