@@ -14,15 +14,5 @@
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
 /web/bundles/
-!/vendor
-/vendor/*
-/vendor/symfony/*
-/vendor/symfony/symfony/*
-/vendor/symfony/symfony/src/*
-/vendor/symfony/symfony/src/Symfony/*
-/vendor/symfony/symfony/src/Symfony/Bridge/*
-/vendor/symfony/symfony/src/Symfony/Bridge/Twig/*
-/vendor/symfony/symfony/src/Symfony/Bridge/Twig/Resources/*
-/vendor/symfony/symfony/src/Symfony/Bridge/Twig/Resources/views/*
-!/vendor/symfony/symfony/src/Symfony/Bridge/Twig/Resources/views/Form
+/vendor/
 .idea/*
