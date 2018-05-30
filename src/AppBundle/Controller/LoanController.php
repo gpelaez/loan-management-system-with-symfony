@@ -44,7 +44,7 @@ class LoanController extends BaseController
         $pagination = $paginator->paginate(
             $loans, /* query NOT result */
             $request->query->getInt('page', 1)/*page number*/,
-            1/*limit per page*/
+            7/*limit per page*/
         );
 
         return $this->render('loan/loan.html.twig', array(
@@ -308,7 +308,7 @@ class LoanController extends BaseController
             $customerFixed = $request->get('customerFixed');
 
             $loanAmount = $request->get('loanAmount');
-            $loanCode = $request->get('loanCode');
+//            $loanCode = $request->get('loanCode');
             $loanStartedDate = $request->get('loanStartedDate');
             $loanInterest = $request->get('loanInterest');
             $loanPeriod = $request->get('loanPeriod');
@@ -369,7 +369,7 @@ class LoanController extends BaseController
 
             $loan = new Loan();
             $loan->setLoanAmount($loanAmount);
-            $loan->setLoanCode($loanCode);
+            $loan->setLoanCode('loanCode');
             $loan->setStartedDate(new \DateTime($loanStartedDate));
             $loan->setInterest($loanInterest);
             $loan->setPeriod($loanPeriod);
@@ -384,6 +384,22 @@ class LoanController extends BaseController
             $entityManager->persist($customer);
             $entityManager->persist($witness1);
             $entityManager->persist($witness2);
+            $entityManager->persist($loan);
+            $entityManager->flush();
+
+            $loanId = $loan->getId();
+            if ($loanId < 10) {
+                $loan->setLoanCode('AK00000'.$loanId);
+            }
+            elseif ($loanId < 100) {
+                $loan->setLoanCode('AK0000'.$loanId);
+            }
+            elseif ($loanId < 1000) {
+                $loan->setLoanCode('AK000'.$loanId);
+            }
+            else {
+                $loan->setLoanCode('AK00'.$loanId);
+            }
             $entityManager->persist($loan);
             $entityManager->flush();
 
