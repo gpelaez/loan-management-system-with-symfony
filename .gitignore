@@ -14,7 +14,7 @@
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
 !/vendor
-!/vendor/*
+/vendor/*
 !/vendor/symfony/symfony/src/Bridge/Twig/Resources/views
 /web/bundles/
 .idea/*
