@@ -4,12 +4,17 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" type="text/css"
+          href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css"/>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script type="text/javascript"
+            src="http://www.shieldui.com/shared/components/latest/js/shieldui-all.min.js"></script>
+    <script type="text/javascript" src="http://www.shieldui.com/shared/components/latest/js/jszip.min.js"></script>
 {% endblock %}
 
 {% block navblock %}
@@ -26,8 +31,9 @@
         </div>
     </form>
     <ul class="nav navbar-nav navbar-right">
-        <li><a href="{{ path('loanComplete', {'areaId':areaId}) }}">Completed Loans</a></li>
         <li><a href="{{ path('loanAdd', {'areaId':areaId}) }}">Add Loans</a></li>
+        <li><a href="{{ path('loanComplete', {'areaId':areaId}) }}">Completed Loans</a></li>
+        <li><a id="printBtn" href="#">Print</a></li>
     </ul>
 
 {% endblock %}
@@ -41,7 +47,7 @@
                 <h3>Loans</h3>
                 <div class="container">
                     <div class="row" style="overflow: auto; white-space: nowrap">
-                        <table class="table table-hover">
+                        <table id="printTable" class="table table-hover">
                             <thead>
                             <tr>
                                 <th>#</th>
@@ -70,11 +76,9 @@
                                     {#<td>{{ loan.totalAmount }}</td>#}
                                     <td>{{ loan.startedDate|date('Y-m-d') }}</td>
                                     <td>{{ loan.weeklyPayment }}</td>
-                                    <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }}
-                                        ({{ loan.totalPaymentDates }})
+                                    <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }} ({{ loan.totalPaymentDates }})
                                     </td>
-                                    <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }}
-                                        ({{ loan.areasAmountDates }})
+                                    <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }} ({{ loan.areasAmountDates }})
                                     </td>
                                     <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment"
                                         loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }}</td>
@@ -106,7 +110,7 @@
                     var loanId = $(this).attr("loanId");
 
                     $.ajax({
-                        url: Routing.generate('addInstallment', { loanId: loanId, installmentAmount: v }),
+                        url: Routing.generate('addInstallment', {loanId: loanId, installmentAmount: v}),
                         type: "POST",
                         dataType: "json",
                         data: {},
@@ -130,6 +134,60 @@
 
         });
 
+    </script>
+
+    <script type="text/javascript">
+        $(function ($) {
+            $("#printBtn").click(function () {
+                // parse the HTML table element having an id=printTable
+                var dataSource = shield.DataSource.create({
+                    data: "#printTable",
+                    schema: {
+                        type: "table",
+                    }
+                });
+
+                // when parsing is done, export the data to PDF
+                dataSource.read().then(function (data) {
+                    var pdf = new shield.exp.PDFDocument({
+                        author: "Micro-Credit",
+                        created: new Date()
+                    });
+
+                    pdf.addPage("a4", "landscape");
+
+                    pdf.table(
+                        41,
+                        41,
+                        data,
+                        [
+                            {field: "#", title: "#", width: 26},
+                            {field: "Loan Code", title: "Loan Code", width: 67},
+                            {field: "Customer Name", title: "Customer Name", width: 123},
+                            {field: "Customer Nic", title: "Customer\nNic", width: 74},
+                            {field: "Loan Amount", title: "Loan\nAmount", width: 58},
+                            // { field: "Total Amount", title: "Total Amount", width: 60 },
+                            {field: "Started Date", title: "Started\nDate", width: 70},
+                            {field: "Weekly Payment", title: "Weekly\nPayment", width: 58},
+                            {field: "Total Payment", title: "Total\nPayment", width: 84},
+                            {field: "Areas Amount", title: "Areas\nAmount", width: 84},
+                            {field: "Last Installment", title: "Last\nInstallment", width: 70},
+                            {field: "Period", title: "Period", width: 46},
+                        ],
+                        {
+                            margins: {
+                                top: 41,
+                                left: 41,
+                            }
+                        }
+                    );
+
+                    pdf.saveAs({
+                        fileName: "Completed-Loans " + new Date()
+                    });
+                });
+            });
+        });
     </script>
 
 {% endblock %}
