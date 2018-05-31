@@ -331,6 +331,16 @@ class LoanController extends BaseController
 
             if (!$customer) {
                 $customer = new Customer();
+            } else {
+                foreach ($customer->getLoans() as $loan) {
+                    if (!$loan->getIsComplete()) {
+                        return $this->render('loan/loanAdd.html.twig', array(
+                            'areaId' => $areaId,
+                            'error' => $customerName . " has an Incomplete Loan !",
+                            'errorLoan' => "Loan Code: " . $loan->getLoanCode() . " | Loan Amount: " . $loan->getLoanAmount(),
+                        ));
+                    }
+                }
             }
 
             $customer->setName($customerName);
@@ -389,16 +399,13 @@ class LoanController extends BaseController
 
             $loanId = $loan->getId();
             if ($loanId < 10) {
-                $loan->setLoanCode('AK00000'.$loanId);
-            }
-            elseif ($loanId < 100) {
-                $loan->setLoanCode('AK0000'.$loanId);
-            }
-            elseif ($loanId < 1000) {
-                $loan->setLoanCode('AK000'.$loanId);
-            }
-            else {
-                $loan->setLoanCode('AK00'.$loanId);
+                $loan->setLoanCode('AK00000' . $loanId);
+            } elseif ($loanId < 100) {
+                $loan->setLoanCode('AK0000' . $loanId);
+            } elseif ($loanId < 1000) {
+                $loan->setLoanCode('AK000' . $loanId);
+            } else {
+                $loan->setLoanCode('AK00' . $loanId);
             }
             $entityManager->persist($loan);
             $entityManager->flush();

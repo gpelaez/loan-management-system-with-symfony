@@ -81,7 +81,7 @@
                                     <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }} ({{ loan.areasAmountDates }})
                                     </td>
                                     <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment"
-                                        loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }}</td>
+                                        loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }} ({{ loan.lastInstallmentAmountDates }})</td>
                                     <td>{{ loan.period }}</td>
                                     <td><a class="btn btn-default btn-xs"
                                            href="{{ path('loanView', {'areaId':areaId, 'loanId':loan.id}) }}">View</a>
