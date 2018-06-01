@@ -519,13 +519,13 @@ class LoanController extends BaseController
 
             $loanId = $loan->getId();
             if ($loanId < 10) {
-                $loan->setLoanCode('AK00000' . $loanId);
+                $loan->setLoanCode('MT00000' . $loanId);
             } elseif ($loanId < 100) {
-                $loan->setLoanCode('AK0000' . $loanId);
+                $loan->setLoanCode('MT0000' . $loanId);
             } elseif ($loanId < 1000) {
-                $loan->setLoanCode('AK000' . $loanId);
+                $loan->setLoanCode('MT000' . $loanId);
             } else {
-                $loan->setLoanCode('AK00' . $loanId);
+                $loan->setLoanCode('MT00' . $loanId);
             }
             $entityManager->persist($loan);
             $entityManager->flush();
