@@ -10,6 +10,11 @@ namespace AppBundle\Repository;
  */
 class CustomerRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param $customerNic
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findCustomerByNic($customerNic)
     {
         return $this->createQueryBuilder('c')

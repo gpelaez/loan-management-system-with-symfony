@@ -59,41 +59,65 @@ class Admin implements AdvancedUserInterface, \Serializable
         $this->setIsActive(1);
     }
 
+    /**
+     * @return bool
+     */
     public function isAccountNonExpired()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function isAccountNonLocked()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function isCredentialsNonExpired()
     {
         return true;
     }
 
+    /**
+     * @return bool|int
+     */
     public function isEnabled()
     {
         return $this->isActive;
     }
 
+    /**
+     * @return string
+     */
     public function getUsername()
     {
         return $this->name;
     }
 
+    /**
+     * @return null|string
+     */
     public function getSalt()
     {
         return null;
     }
 
+    /**
+     * @return array
+     */
     public function getRoles()
     {
         return array('ROLE_ADMIN');
     }
 
+    /**
+     *
+     */
     public function eraseCredentials()
     {
 

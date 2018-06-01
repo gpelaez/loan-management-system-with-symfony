@@ -10,6 +10,10 @@ namespace AppBundle\Repository;
  */
 class LoanRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param $areaId
+     * @return array
+     */
     public function findLoansByAreaId($areaId)
     {
         return $this->createQueryBuilder('l')
@@ -20,6 +24,11 @@ class LoanRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param $areaId
+     * @param $search
+     * @return array
+     */
     public function findLoansBySearch($areaId, $search)
     {
         return $this->createQueryBuilder('l')
@@ -32,6 +41,10 @@ class LoanRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param $areaId
+     * @return array
+     */
     public function findCompletedLoansByAreaId($areaId)
     {
         return $this->createQueryBuilder('l')
@@ -42,6 +55,11 @@ class LoanRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param $areaId
+     * @param $search
+     * @return array
+     */
     public function findCompletedLoansBySearch($areaId, $search)
     {
         return $this->createQueryBuilder('l')

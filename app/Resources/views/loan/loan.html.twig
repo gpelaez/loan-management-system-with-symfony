@@ -4,17 +4,12 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css"
-          href="http://www.shieldui.com/shared/components/latest/css/light/all.min.css"/>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-    <script type="text/javascript"
-            src="http://www.shieldui.com/shared/components/latest/js/shieldui-all.min.js"></script>
-    <script type="text/javascript" src="http://www.shieldui.com/shared/components/latest/js/jszip.min.js"></script>
 {% endblock %}
 
 {% block navblock %}
@@ -81,7 +76,8 @@
                                     <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }} ({{ loan.areasAmountDates }})
                                     </td>
                                     <td id="{{ loan.id }}-lastInstallmentAmount" class="add-installment"
-                                        loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }} ({{ loan.lastInstallmentAmountDates }})</td>
+                                        loanId="{{ loan.id }}">{{ loan.lastInstallmentAmount }} ({{ loan.lastInstallmentAmountDates }})
+                                    </td>
                                     <td>{{ loan.period }}</td>
                                     <td><a class="btn btn-default btn-xs"
                                            href="{{ path('loanView', {'areaId':areaId, 'loanId':loan.id}) }}">View</a>

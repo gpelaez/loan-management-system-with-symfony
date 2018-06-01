@@ -8,8 +8,6 @@
 
 namespace AppBundle\Controller;
 
-//require '/home/mihiran-hlrm/Projects/Symfony/Micro-Credit/vendor/autoload.php';
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -112,31 +110,31 @@ class LoanController extends BaseController
             ->setCellValue('L1', 'SUN')
             ->setCellValue('M1', 'MON');
 
-        foreach ($loans as $key=>$loan) {
+        foreach ($loans as $key => $loan) {
             $this->updateLoanByCalculations($loan);
 
             $row = $key + 3;
 
             $spreadsheet->getSheet(0)
-                ->setCellValue('A'.$row, $key)
-                ->setCellValue('B'.$row, $loan->getLoanCode())
-                ->setCellValue('C'.$row, $loan->getCustomer()->getName())
-                ->setCellValue('D'.$row, $loan->getCustomer()->getNic())
-                ->setCellValue('E'.$row, $loan->getLoanAmount())
-                ->setCellValue('F'.$row, $loan->getStartedDate()->format('Y-m-d'))
-                ->setCellValue('G'.$row, $loan->getWeeklyPayment())
-                ->setCellValue('H'.$row, $loan->getTotalPayment().' ('.$loan->getTotalPaymentDates().')')
-                ->setCellValue('I'.$row, $loan->getAreasAmount().' ('.$loan->getAreasAmountDates().')')
-                ->setCellValue('J'.$row, $loan->getLastInstallmentAmount().' ('.$loan->getLastInstallmentAmountDates().')')
-                ->setCellValue('K'.$row, $loan->getPeriod());
+                ->setCellValue('A' . $row, $key)
+                ->setCellValue('B' . $row, $loan->getLoanCode())
+                ->setCellValue('C' . $row, $loan->getCustomer()->getName())
+                ->setCellValue('D' . $row, $loan->getCustomer()->getNic())
+                ->setCellValue('E' . $row, $loan->getLoanAmount())
+                ->setCellValue('F' . $row, $loan->getStartedDate()->format('Y-m-d'))
+                ->setCellValue('G' . $row, $loan->getWeeklyPayment())
+                ->setCellValue('H' . $row, $loan->getTotalPayment() . ' (' . $loan->getTotalPaymentDates() . ')')
+                ->setCellValue('I' . $row, $loan->getAreasAmount() . ' (' . $loan->getAreasAmountDates() . ')')
+                ->setCellValue('J' . $row, $loan->getLastInstallmentAmount() . ' (' . $loan->getLastInstallmentAmountDates() . ')')
+                ->setCellValue('K' . $row, $loan->getPeriod());
 
             $spreadsheet->getSheet(1)
-                ->setCellValue('A'.$row, $key)
-                ->setCellValue('B'.$row, $loan->getLoanCode())
-                ->setCellValue('C'.$row, $loan->getCustomer()->getName())
-                ->setCellValue('D'.$row, $loan->getLoanAmount())
-                ->setCellValue('E'.$row, $loan->getAreasAmount())
-                ->setCellValue('F'.$row, $loan->getCustomer()->getMobile());
+                ->setCellValue('A' . $row, $key)
+                ->setCellValue('B' . $row, $loan->getLoanCode())
+                ->setCellValue('C' . $row, $loan->getCustomer()->getName())
+                ->setCellValue('D' . $row, $loan->getLoanAmount())
+                ->setCellValue('E' . $row, $loan->getAreasAmount())
+                ->setCellValue('F' . $row, $loan->getCustomer()->getMobile());
         }
 
         $spreadsheet->getSheet(0)->getStyle('A1:K1000')
@@ -157,7 +155,7 @@ class LoanController extends BaseController
         $date = new \DateTime();
         // Redirect output to a client’s web browser (Xlsx)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Micro-Credit-Loans-Area-'.$areaId.'-'.$date->format('Y-m-d').'.xlsx"');
+        header('Content-Disposition: attachment;filename="Micro-Credit-Loans-Area-' . $areaId . '-' . $date->format('Y-m-d') . '.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');

@@ -10,6 +10,11 @@ namespace AppBundle\Repository;
  */
 class WitnessRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param $witnessNic
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findWitnessByNic($witnessNic)
     {
         return $this->createQueryBuilder('w')
