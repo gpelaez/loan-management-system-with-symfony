@@ -52,7 +52,7 @@
                                 <th>Loan Amount</th>
                                 {#<th>Total Amount</th>#}
                                 <th>Started Date</th>
-                                <th>Weekly Payment</th>
+                                {#<th>Weekly Payment</th>#}
                                 <th>Total Payment</th>
                                 <th>Areas Amount</th>
                                 <th>Last Installment</th>
@@ -70,7 +70,7 @@
                                     <td>{{ loan.loanAmount }}</td>
                                     {#<td>{{ loan.totalAmount }}</td>#}
                                     <td>{{ loan.startedDate|date('Y-m-d') }}</td>
-                                    <td>{{ loan.weeklyPayment }}</td>
+                                    {#<td>{{ loan.weeklyPayment }}</td>#}
                                     <td id="{{ loan.id }}-totalPayment">{{ loan.totalPayment }} ({{ loan.totalPaymentDates }})
                                     </td>
                                     <td id="{{ loan.id }}-areasAmount">{{ loan.areasAmount }} ({{ loan.areasAmountDates }})
