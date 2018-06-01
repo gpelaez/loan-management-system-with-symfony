@@ -51,6 +51,7 @@ class ComposerStaticInit70ca2373c31613dc199ee75b0233a85b
             'Psr\\Link\\' => 9,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
+            'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
         'M' => 
         array (
@@ -184,6 +185,10 @@ class ComposerStaticInit70ca2373c31613dc199ee75b0233a85b
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
+        'PhpOffice\\PhpSpreadsheet\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
         ),
         'Monolog\\' => 
         array (

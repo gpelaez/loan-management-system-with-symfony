@@ -8,10 +8,14 @@
 
 namespace AppBundle\Controller;
 
+//require '/home/mihiran-hlrm/Projects/Symfony/Micro-Credit/vendor/autoload.php';
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use AppBundle\Entity\Area;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Customer;
@@ -50,6 +54,124 @@ class LoanController extends BaseController
         return $this->render('loan/loan.html.twig', array(
             'areaId' => $areaId,
             'loans' => $pagination,
+        ));
+    }
+
+    /**
+     * @Route("/dashboard/area/{areaId}/loan/print", name="loanPrint")
+     */
+    public function loanPrint(Request $request, $areaId)
+    {
+        $loans = $this->getDoctrine()
+            ->getRepository(Loan::class)
+            ->findLoansByAreaId($areaId);
+
+        foreach ($loans as $loan) {
+            $this->updateLoanByCalculations($loan);
+        }
+
+        // Create new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+
+        // Set document properties
+        $spreadsheet->getProperties()->setCreator('Mihiran-Hlrm')
+            ->setLastModifiedBy('Mihiran-Hlrm')
+            ->setTitle('Micro-Credit Loans')
+            ->setSubject('Micro-Credit Loans')
+            ->setDescription('Micro-Credit Loans')
+            ->setKeywords('office 2007 openxml php')
+            ->setCategory('Loans');
+
+        // Add some data
+        $spreadsheet->getSheet(0)
+            ->setCellValue('A1', '#')
+            ->setCellValue('B1', 'Loan Code')
+            ->setCellValue('C1', 'Customer Name')
+            ->setCellValue('D1', 'Customer Nic')
+            ->setCellValue('E1', 'Loan Amount')
+            ->setCellValue('F1', 'Started Date')
+            ->setCellValue('G1', 'Weekly Payment')
+            ->setCellValue('H1', 'Total Payment')
+            ->setCellValue('I1', 'Areas Amount')
+            ->setCellValue('J1', 'Last Installment')
+            ->setCellValue('K1', 'Period');
+
+        $spreadsheet->createSheet();
+        $spreadsheet->getSheet(1)
+            ->setCellValue('A1', '#')
+            ->setCellValue('B1', 'Loan Code')
+            ->setCellValue('C1', 'Customer Name')
+            ->setCellValue('D1', 'Loan Amount')
+            ->setCellValue('E1', 'Areas Amount')
+            ->setCellValue('F1', 'Mobile')
+            ->setCellValue('G1', 'TUE')
+            ->setCellValue('H1', 'WED')
+            ->setCellValue('I1', 'THU')
+            ->setCellValue('J1', 'FRI')
+            ->setCellValue('K1', 'SAT')
+            ->setCellValue('L1', 'SUN')
+            ->setCellValue('M1', 'MON');
+
+        foreach ($loans as $key=>$loan) {
+            $this->updateLoanByCalculations($loan);
+
+            $row = $key + 3;
+
+            $spreadsheet->getSheet(0)
+                ->setCellValue('A'.$row, $key)
+                ->setCellValue('B'.$row, $loan->getLoanCode())
+                ->setCellValue('C'.$row, $loan->getCustomer()->getName())
+                ->setCellValue('D'.$row, $loan->getCustomer()->getNic())
+                ->setCellValue('E'.$row, $loan->getLoanAmount())
+                ->setCellValue('F'.$row, $loan->getStartedDate()->format('Y-m-d'))
+                ->setCellValue('G'.$row, $loan->getWeeklyPayment())
+                ->setCellValue('H'.$row, $loan->getTotalPayment().' ('.$loan->getTotalPaymentDates().')')
+                ->setCellValue('I'.$row, $loan->getAreasAmount().' ('.$loan->getAreasAmountDates().')')
+                ->setCellValue('J'.$row, $loan->getLastInstallmentAmount().' ('.$loan->getLastInstallmentAmountDates().')')
+                ->setCellValue('K'.$row, $loan->getPeriod());
+
+            $spreadsheet->getSheet(1)
+                ->setCellValue('A'.$row, $key)
+                ->setCellValue('B'.$row, $loan->getLoanCode())
+                ->setCellValue('C'.$row, $loan->getCustomer()->getName())
+                ->setCellValue('D'.$row, $loan->getLoanAmount())
+                ->setCellValue('E'.$row, $loan->getAreasAmount())
+                ->setCellValue('F'.$row, $loan->getCustomer()->getMobile());
+        }
+
+        $spreadsheet->getSheet(0)->getStyle('A1:K1000')
+            ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
+        $spreadsheet->getSheet(1)->getStyle('A1:M1000')
+            ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
+        // Rename worksheet
+        $spreadsheet->getSheet(0)->setTitle('Micro-Credit Detail-Report');
+
+        // Rename worksheet
+        $spreadsheet->getSheet(1)->setTitle('Micro-Credit Collection-Sheet');
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $date = new \DateTime();
+        // Redirect output to a client’s web browser (Xlsx)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Micro-Credit-Loans-Area-'.$areaId.'-'.$date->format('Y-m-d').'.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+
+        return $this->redirectToRoute('loan', array(
+            'areaId' => $areaId,
         ));
     }
 

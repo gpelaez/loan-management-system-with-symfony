@@ -12,3 +12,8 @@ addInstallment:
     resource: "@AppBundle/Controller/"
     options:
         expose: true
+
+loan:
+    resource: "@AppBundle/Controller/"
+    options:
+        expose: true
