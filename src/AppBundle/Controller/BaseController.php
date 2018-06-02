@@ -21,7 +21,7 @@ class BaseController extends Controller
 
         $amountPerDay = round($totalAmount / ($loan->getPeriod()), 2);
 
-        $weeklyPayment = $amountPerDay * 7;
+        $weeklyPayment = round($amountPerDay * 7);
 
         $totalPayment = 0;
         foreach ($loan->getInstallments() as $installment) {
@@ -30,7 +30,7 @@ class BaseController extends Controller
 
         $totalPaymentDates = round($totalPayment / $amountPerDay, 2);
 
-        $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%d');
+        $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%a');
 
         $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
 
