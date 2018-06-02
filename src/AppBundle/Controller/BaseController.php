@@ -32,7 +32,7 @@ class BaseController extends Controller
 
         $dateDiff = date_diff(new \DateTime(), $loan->getStartedDate())->format('%a');
 
-        $areasAmount = ($dateDiff * $amountPerDay) - $totalPayment;
+        $areasAmount = round(($dateDiff * $amountPerDay) - $totalPayment, 2);
 
         $areasAmountDates = round($areasAmount / $amountPerDay, 2);
 
