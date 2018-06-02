@@ -342,9 +342,8 @@ class LoanController extends BaseController
             $entityManager->persist($loan);
             $entityManager->flush();
 
-            return $this->redirectToRoute('loanEdit', array(
+            return $this->redirectToRoute('loan', array(
                 'areaId' => $areaId,
-                'loanId' => $loanId,
             ));
         }
 
