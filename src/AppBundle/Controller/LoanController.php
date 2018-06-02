@@ -218,6 +218,50 @@ class LoanController extends BaseController
     }
 
     /**
+     * @Route("/dashboard/area/{areaId}/loan/{loanId}/remove-installment/{installmentId}", name="removeInstallment")
+     */
+    public function removeInstallment(Request $request, $areaId, $loanId, $installmentId)
+    {
+        $loan = $this->getDoctrine()
+            ->getRepository(Loan::class)
+            ->find($loanId);
+
+        if (!$loan) {
+            throw $this->createNotFoundException(
+                'No Loan Found !'
+            );
+        }
+
+        $installment = $this->getDoctrine()
+            ->getRepository(Installment::class)
+            ->find($installmentId);
+
+        if (!$installment) {
+            throw $this->createNotFoundException(
+                'No Installment Found !'
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($installment);
+        $entityManager->flush();
+
+        $loan = $this->updateLoanByCalculations($loan);
+
+        if ($loan->getTotalPayment() >= $loan->getTotalAmount()) {
+            $loan->setIsComplete(1);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($loan);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('loanView', array(
+            'areaId' => $areaId,
+            'loanId' => $loanId,
+        ));
+    }
+
+    /**
      * @Route("/dashboard/area/{areaId}/loan/view/{loanId}", name="loanView")
      */
     public function loanView(Request $request, $areaId, $loanId)

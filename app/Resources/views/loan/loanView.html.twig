@@ -93,6 +93,7 @@
                                 <th>#</th>
                                 <th>Installment Amount</th>
                                 <th>Payment Date</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -101,6 +102,9 @@
                                     <td>{{ loop.index }}</td>
                                     <td>{{ installment.installmentAmount }}</td>
                                     <td>{{ installment.paymentDate|date('Y-m-d') }}</td>
+                                    <td><a class="btn btn-default btn-xs"
+                                           href="{{ path('removeInstallment', {'areaId':areaId, 'loanId':loanId, 'installmentId':installment.id}) }}">Remove</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
