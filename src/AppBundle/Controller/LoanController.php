@@ -110,6 +110,11 @@ class LoanController extends BaseController
             ->setCellValue('L1', 'SUN')
             ->setCellValue('M1', 'MON');
 
+        $row = 3;
+        $totalLoanAmount = 0;
+        $totalTotalPayment = 0;
+        $totalLastInstallmentAmount = 0;
+
         foreach ($loans as $key => $loan) {
             $this->updateLoanByCalculations($loan);
 
@@ -128,6 +133,10 @@ class LoanController extends BaseController
                 ->setCellValue('J' . $row, $loan->getLastInstallmentAmount() . ' (' . $loan->getLastInstallmentAmountDates() . ')')
                 ->setCellValue('K' . $row, $loan->getPeriod());
 
+            $totalLoanAmount += $loan->getLoanAmount();
+            $totalTotalPayment += $loan->getTotalPayment();
+            $totalLastInstallmentAmount += $loan->getLastInstallmentAmount();
+
             $spreadsheet->getSheet(1)
                 ->setCellValue('A' . $row, $key + 1)
                 ->setCellValue('B' . $row, $loan->getLoanCode())
@@ -136,6 +145,11 @@ class LoanController extends BaseController
                 ->setCellValue('E' . $row, $loan->getAreasAmount())
                 ->setCellValue('F' . $row, $loan->getCustomer()->getMobile());
         }
+
+        $spreadsheet->getSheet(0)
+            ->setCellValue('E' . ($row + 1), $totalLoanAmount)
+            ->setCellValue('H' . ($row + 1), $totalTotalPayment)
+            ->setCellValue('J' . ($row + 1), $totalLastInstallmentAmount);
 
         $spreadsheet->getSheet(0)->getStyle('A1:K1000')
             ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
