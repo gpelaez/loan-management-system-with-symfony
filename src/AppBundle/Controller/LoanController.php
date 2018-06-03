@@ -116,7 +116,7 @@ class LoanController extends BaseController
             $row = $key + 3;
 
             $spreadsheet->getSheet(0)
-                ->setCellValue('A' . $row, $key)
+                ->setCellValue('A' . $row, $key + 1)
                 ->setCellValue('B' . $row, $loan->getLoanCode())
                 ->setCellValue('C' . $row, $loan->getCustomer()->getName())
                 ->setCellValue('D' . $row, $loan->getCustomer()->getNic())
