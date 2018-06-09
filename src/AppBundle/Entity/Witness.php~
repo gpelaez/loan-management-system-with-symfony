@@ -78,7 +78,8 @@ class Witness
     /**
      * Witness constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->setDateTime(new \DateTime());
         $this->loans = new ArrayCollection();
     }

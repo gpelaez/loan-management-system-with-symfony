@@ -10,5 +10,18 @@ namespace AppBundle\Repository;
  */
 class InstallmentRepository extends \Doctrine\ORM\EntityRepository
 {
-
+    /**
+     * @param $loan
+     * @return array
+     */
+    public function findLastInstallmentsByLoan($loan)
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.loan = :loanId')
+            ->andWhere('i.paymentDate >= :lastPrintedDate')
+            ->setParameter('loanId', $loan->getId())
+            ->setParameter('lastPrintedDate', $loan->getArea()->getLastPrintedDate())
+            ->getQuery()
+            ->getResult();
+    }
 }

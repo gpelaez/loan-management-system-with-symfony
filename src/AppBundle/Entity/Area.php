@@ -44,6 +44,13 @@ class Area
     private $areaCode;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="LastPrintedDate", type="datetime")
+     */
+    private $lastPrintedDate;
+
+    /**
      * One Area has Many Loans.
      * @ORM\OneToMany(targetEntity="Loan", mappedBy="area")
      */
@@ -55,6 +62,7 @@ class Area
     public function __construct()
     {
         $this->setDateTime(new \DateTime());
+        $this->setLastPrintedDate(new \DateTime());
         $this->loans = new ArrayCollection();
     }
 
@@ -180,5 +188,29 @@ class Area
     public function getDateTime()
     {
         return $this->dateTime;
+    }
+
+    /**
+     * Set lastPrintedDate
+     *
+     * @param \DateTime $lastPrintedDate
+     *
+     * @return Area
+     */
+    public function setLastPrintedDate($lastPrintedDate)
+    {
+        $this->lastPrintedDate = $lastPrintedDate;
+
+        return $this;
+    }
+
+    /**
+     * Get lastPrintedDate
+     *
+     * @return \DateTime
+     */
+    public function getLastPrintedDate()
+    {
+        return $this->lastPrintedDate;
     }
 }

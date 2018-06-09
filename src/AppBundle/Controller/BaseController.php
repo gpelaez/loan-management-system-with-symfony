@@ -15,6 +15,10 @@ use AppBundle\Entity\Installment;
 
 class BaseController extends Controller
 {
+    /**
+     * @param $loan
+     * @return mixed
+     */
     public function updateLoanByCalculations($loan)
     {
         $totalAmount = round($loan->getLoanAmount() * (1 + $loan->getInterest()), 2);
@@ -38,15 +42,12 @@ class BaseController extends Controller
 
         $installments = $this->getDoctrine()
             ->getRepository(Installment::class)
-            ->findBy(
-                array('loan' => $loan),
-                array('paymentDate' => 'DESC')
-            );
+            ->findLastInstallmentsByLoan($loan);
 
         $lastInstallmentAmount = 0;
 
-        if ($installments) {
-            $lastInstallmentAmount = $installments[0]->getInstallmentAmount();
+        foreach ($installments as $installment) {
+            $lastInstallmentAmount += $installment->getInstallmentAmount();
         }
 
         $lastInstallmentAmountDates = round($lastInstallmentAmount / $amountPerDay, 2);

@@ -60,6 +60,10 @@ class LoanController extends BaseController
      */
     public function loanPrint(Request $request, $areaId)
     {
+        $area = $this->getDoctrine()
+            ->getRepository(Area::class)
+            ->find($areaId);
+
         $loans = $this->getDoctrine()
             ->getRepository(Loan::class)
             ->findLoansByAreaId($areaId);
@@ -181,6 +185,11 @@ class LoanController extends BaseController
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');
+
+        $area->setLastPrintedDate(new \DateTime());
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($area);
+        $entityManager->flush();
 
         return $this->redirectToRoute('loan', array(
             'areaId' => $areaId,

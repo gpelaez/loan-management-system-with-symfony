@@ -298,7 +298,8 @@ class Loan
     /**
      * Loan constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->setDateTime(new \DateTime());
         $this->setStartedDate(new \DateTime());
         $this->setIsComplete(0);
@@ -582,6 +583,28 @@ class Loan
     public function getWitnesses()
     {
         return $this->witnesses;
+    }
+
+    /**
+     * @param Witness|null $witness
+     * @return $this
+     */
+    public function setFirstWitness(Witness $witness = null)
+    {
+        $this->witnesses[0] = $witness;
+
+        return $this;
+    }
+
+    /**
+     * @param Witness|null $witness
+     * @return $this
+     */
+    public function setSecondWitness(Witness $witness = null)
+    {
+        $this->witnesses[1] = $witness;
+
+        return $this;
     }
 
     /**
