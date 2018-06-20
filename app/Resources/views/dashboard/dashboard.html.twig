@@ -27,25 +27,38 @@
         <main>
             <center>
                 <hr>
-                <h2>Micro-Credit Service</h2>
+                <h2>Southern-Lanka</h2>
+                <h5>Micro-Credit Service</h5>
                 <hr>
                 <br><br>
                 <div class="container">
                     <div>
                         <div class="quick-actions_homepage">
-                            <ul class="quick-actions">
-                                <li><a href="{{ path('loan', {'areaId':1}) }}"> <i class="icon-cabinet"></i>Area-01</a>
-                                </li>
-                                <li><a href="{{ path('loan', {'areaId':2}) }}"> <i class="icon-cabinet"></i>Area-02</a>
-                                </li>
-                                <li><a href="{{ path('loan', {'areaId':3}) }}"> <i class="icon-cabinet"></i>Area-03</a>
-                                </li>
-                                <li><a href="{{ path('adminChangePassword', {'adminId':1}) }}"> <i
-                                                class="icon-home"></i>Admin</a></li>
-                            </ul>
+                            <div class="row">
+                                <div class="quick-actions">
+                                    {% for area in areas %}
+                                        <div class="area-blocks"><a href="{{ path('loan', {'areaId': area.id}) }}"
+                                                                    style="text-decoration: none"> <i
+                                                        class="icon-cabinet"></i>
+                                                <span>Area-0{{ area.id }}</span>
+                                                <div class="total-values">
+                                                    <div>
+                                                        <span>Total Amount: {{ total[area.id][0] }}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span>Total Payment: {{ total[area.id][1] }}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span>Total Last Installment: {{ total[area.id][2] }}</span>
+                                                    </div>
+                                                </div>
+                                            </a></div>
+                                    {% endfor %}
+                                </div>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
             </center>
         </main>
     </div>

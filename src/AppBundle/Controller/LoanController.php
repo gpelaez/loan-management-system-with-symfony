@@ -78,9 +78,9 @@ class LoanController extends BaseController
         // Set document properties
         $spreadsheet->getProperties()->setCreator('Mihiran-Hlrm')
             ->setLastModifiedBy('Mihiran-Hlrm')
-            ->setTitle('Micro-Credit Loans')
-            ->setSubject('Micro-Credit Loans')
-            ->setDescription('Micro-Credit Loans')
+            ->setTitle('Southern-Lanka Loans')
+            ->setSubject('Southern-Lanka Loans')
+            ->setDescription('Southern-Lanka Loans')
             ->setKeywords('office 2007 openxml php')
             ->setCategory('Loans');
 
@@ -162,10 +162,10 @@ class LoanController extends BaseController
             ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 
         // Rename worksheet
-        $spreadsheet->getSheet(0)->setTitle('Micro-Credit Detail-Report');
+        $spreadsheet->getSheet(0)->setTitle('Southern-Lanka Detail-Report');
 
         // Rename worksheet
-        $spreadsheet->getSheet(1)->setTitle('Micro-Credit Collection-Sheet');
+        $spreadsheet->getSheet(1)->setTitle('Southern-Lanka Collection-Sheet');
 
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet
         $spreadsheet->setActiveSheetIndex(0);
@@ -173,7 +173,7 @@ class LoanController extends BaseController
         $date = new \DateTime();
         // Redirect output to a client’s web browser (Xlsx)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Micro-Credit-Loans-Area-' . $areaId . '-' . $date->format('Y-m-d') . '.xlsx"');
+        header('Content-Disposition: attachment;filename="Southern-Lanka-Loans-Area-' . $areaId . '-' . $date->format('Y-m-d') . '.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
