@@ -4,6 +4,37 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        .quick-actions_homepage {
+            width: 100%;
+        }
+
+        .quick-actions {
+            display: inline-block;
+        }
+
+        .area-blocks {
+            background: #F6F6F6;
+            border: 2px solid #D5D5D5;
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .area-blocks:hover {
+            background: #fff;
+        }
+
+        .total-values {
+            display: block;
+            padding: 8px;
+        }
+
+        .total-values div {
+            color: #666666;
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -38,9 +69,9 @@
                                 <div class="quick-actions">
                                     {% for area in areas %}
                                         <div class="area-blocks"><a href="{{ path('loan', {'areaId': area.id}) }}"
-                                                                    style="text-decoration: none"> <i
-                                                        class="icon-cabinet"></i>
-                                                <span>Area-0{{ area.id }}</span>
+                                                                    style="text-decoration: none"><span
+                                                        class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                                                <span><b>Area-0{{ area.id }}</b></span>
                                                 <div class="total-values">
                                                     <div>
                                                         <span>Total Amount: {{ total[area.id][0] }}</span>
