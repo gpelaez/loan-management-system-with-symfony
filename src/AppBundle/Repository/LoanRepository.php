@@ -32,9 +32,10 @@ class LoanRepository extends \Doctrine\ORM\EntityRepository
     public function findLoansBySearch($areaId, $search)
     {
         return $this->createQueryBuilder('l')
+            ->JOIN('AppBundle:Customer', 'c', 'WITH', 'c.id = l.customer')
             ->where('l.isComplete = 0')
             ->andWhere('l.area = :areaId')
-            ->andWhere('l.loanCode LIKE :search')
+            ->andWhere('c.nic LIKE :search')
             ->setParameter('areaId', $areaId)
             ->setParameter('search', '%' . $search . '%')
             ->getQuery()
@@ -63,9 +64,10 @@ class LoanRepository extends \Doctrine\ORM\EntityRepository
     public function findCompletedLoansBySearch($areaId, $search)
     {
         return $this->createQueryBuilder('l')
+            ->JOIN('AppBundle:Customer', 'c', 'WITH', 'c.id = l.customer')
             ->where('l.isComplete = 1')
             ->andWhere('l.area = :areaId')
-            ->andWhere('l.loanCode LIKE :search')
+            ->andWhere('c.nic LIKE :search')
             ->setParameter('areaId', $areaId)
             ->setParameter('search', '%' . $search . '%')
             ->getQuery()

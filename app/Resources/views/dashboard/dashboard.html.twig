@@ -34,6 +34,22 @@
         .total-values div {
             color: #666666;
         }
+
+        footer {
+            height: 60px;
+            bottom: 0;
+            width: 100%;
+            background-color: #D5D5D5;
+            line-height: 60px;
+            text-align: center;
+        }
+
+
+        @media only screen and (min-width: 700px) {
+            footer {
+                position: fixed;
+            }
+        }
     </style>
 {% endblock %}
 
@@ -90,9 +106,14 @@
                             </div>
                         </div>
                     </div>
+                </div>
             </center>
         </main>
     </div>
+    <br>
+    <footer class="container-fluid">
+        <p>© 2018 Copyright :<a href="#"> www.slmicrocredit.com</a></p>
+    </footer>
 
     <script>
 
