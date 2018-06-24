@@ -197,6 +197,128 @@ class LoanController extends BaseController
     }
 
     /**
+     * @Route("/dashboard/area/{areaId}/loan/print/{loanId}", name="viewPrint")
+     */
+    public function viewPrint(Request $request, $areaId, $loanId)
+    {
+        $loan = $this->getDoctrine()
+            ->getRepository(Loan::class)
+            ->find($loanId);
+
+        $this->updateLoanByCalculations($loan);
+
+        // Create new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+
+        // Set document properties
+        $spreadsheet->getProperties()->setCreator('Mihiran-Hlrm')
+            ->setLastModifiedBy('Mihiran-Hlrm')
+            ->setTitle('Southern-Lanka Loan Details')
+            ->setSubject('Southern-Lanka Loan Details')
+            ->setDescription('Southern-Lanka Loan Details')
+            ->setKeywords('office 2007 openxml php')
+            ->setCategory('Loan Details');
+
+        // Add some data
+        $spreadsheet->getSheet(0)
+            // Loan Details
+            ->setCellValue('A1', 'Loan Code')
+            ->setCellValue('B1', 'Loan Amount')
+            ->setCellValue('C1', 'Total Amount')
+            ->setCellValue('D1', 'Started Date')
+            ->setCellValue('E1', 'Weekly Payment')
+            ->setCellValue('F1', 'Total Payment')
+            ->setCellValue('G1', 'Areas Amount')
+            ->setCellValue('H1', 'Last Installment')
+            ->setCellValue('I1', 'Interest')
+            ->setCellValue('J1', 'Period')
+            ->setCellValue('K1', 'isComplete')
+            ->setCellValue('A2', $loan->getLoanCode())
+            ->setCellValue('B2', $loan->getLoanAmount())
+            ->setCellValue('C2', $loan->getTotalAmount())
+            ->setCellValue('D2', $loan->getStartedDate()->format('Y-m-d'))
+            ->setCellValue('E2', $loan->getWeeklyPayment())
+            ->setCellValue('F2', $loan->getTotalPayment() . ' (' . $loan->getTotalPaymentDates() . ')')
+            ->setCellValue('G2', $loan->getAreasAmount() . ' (' . $loan->getAreasAmountDates() . ')')
+            ->setCellValue('H2', $loan->getLastInstallmentAmount() . ' (' . $loan->getLastInstallmentAmountDates() . ')')
+            ->setCellValue('I2', $loan->getInterest())
+            ->setCellValue('J2', $loan->getPeriod())
+            ->setCellValue('K2', $loan->getIsComplete())
+            // Customer Details
+            ->setCellValue('A5', 'Customer Name')
+            ->setCellValue('C5', 'NIC')
+            ->setCellValue('E5', 'Address')
+            ->setCellValue('H5', 'Mobile')
+            ->setCellValue('J5', 'Fixed')
+            ->setCellValue('A6', $loan->getCustomer()->getName())
+            ->setCellValue('C6', $loan->getCustomer()->getNic())
+            ->setCellValue('E6', $loan->getCustomer()->getAddress())
+            ->setCellValue('H6', $loan->getCustomer()->getMobile())
+            ->setCellValue('J6', $loan->getCustomer()->getFixed())
+            // Witness Details
+            ->setCellValue('A9', 'Witness Name')
+            ->setCellValue('C9', 'NIC')
+            ->setCellValue('E9', 'Address')
+            ->setCellValue('H9', 'Mobile')
+            ->setCellValue('J9', 'Fixed')
+            ->setCellValue('A10', $loan->getWitnesses()[0]->getName())
+            ->setCellValue('C10', $loan->getWitnesses()[0]->getNic())
+            ->setCellValue('E10', $loan->getWitnesses()[0]->getAddress())
+            ->setCellValue('H10', $loan->getWitnesses()[0]->getMobile())
+            ->setCellValue('J10', $loan->getWitnesses()[0]->getFixed())
+            ->setCellValue('A11', $loan->getWitnesses()[1]->getName())
+            ->setCellValue('C11', $loan->getWitnesses()[1]->getNic())
+            ->setCellValue('E11', $loan->getWitnesses()[1]->getAddress())
+            ->setCellValue('H11', $loan->getWitnesses()[1]->getMobile())
+            ->setCellValue('J11', $loan->getWitnesses()[1]->getFixed())
+            // Installment Details
+            ->setCellValue('A14', '#')
+            ->setCellValue('B14', 'Installment Amount')
+            ->setCellValue('D14', 'Payment Date');
+
+
+        foreach ($loan->getInstallments() as $key => $installment) {
+
+            $row = $key + 15;
+
+            $spreadsheet->getSheet(0)
+                ->setCellValue('A' . $row, $key + 1)
+                ->setCellValue('B' . $row, $installment->getInstallmentAmount())
+                ->setCellValue('D' . $row, $installment->getPaymentDate()->format('Y-m-d D'));
+        }
+
+        $spreadsheet->getSheet(0)->getStyle('A1:K1000')
+            ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
+        // Rename worksheet
+        $spreadsheet->getSheet(0)->setTitle('Southern-Lanka Loan Details');
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        $date = new \DateTime();
+        // Redirect output to a client’s web browser (Xlsx)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Southern-Lanka-Loan-' . $loan->getLoanCode() . '-' . $date->format('Y-m-d') . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+
+        return $this->redirectToRoute('loanView', array(
+            'areaId' => $areaId,
+            'loanId' => $loanId,
+        ));
+    }
+
+    /**
      * @Route("/dashboard/loan/{loanId}/add-installment/{installmentAmount}", name="addInstallment")
      */
     public function addInstallment(Request $request, $loanId, $installmentAmount)
