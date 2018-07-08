@@ -68,10 +68,6 @@ class LoanController extends BaseController
             ->getRepository(Loan::class)
             ->findLoansByAreaId($areaId);
 
-        foreach ($loans as $loan) {
-            $this->updateLoanByCalculations($loan);
-        }
-
         // Create new Spreadsheet object
         $spreadsheet = new Spreadsheet();
 
@@ -148,6 +144,19 @@ class LoanController extends BaseController
                 ->setCellValue('D' . $row, $loan->getLoanAmount())
                 ->setCellValue('E' . $row, $loan->getAreasAmount())
                 ->setCellValue('F' . $row, $loan->getCustomer()->getMobile());
+
+            if ($loan->getTotalPayment() >= $loan->getTotalAmount()) {
+                $loan->setIsComplete(1);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($loan);
+                $entityManager->flush();
+
+                $spreadsheet->getSheet(0)
+                    ->setCellValue('B' . $row, '~'.$loan->getLoanCode());
+
+                $spreadsheet->getSheet(1)
+                    ->setCellValue('B' . $row, '~'.$loan->getLoanCode());
+            }
         }
 
         $spreadsheet->getSheet(0)
@@ -344,12 +353,12 @@ class LoanController extends BaseController
 
         $loan = $this->updateLoanByCalculations($loan);
 
-        if ($loan->getTotalPayment() >= $loan->getTotalAmount()) {
-            $loan->setIsComplete(1);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($loan);
-            $entityManager->flush();
-        }
+//        if ($loan->getTotalPayment() >= $loan->getTotalAmount()) {
+//            $loan->setIsComplete(1);
+//            $entityManager = $this->getDoctrine()->getManager();
+//            $entityManager->persist($loan);
+//            $entityManager->flush();
+//        }
 
         $data = array(
             'totalPayment' => $loan->getTotalPayment(),
@@ -395,6 +404,11 @@ class LoanController extends BaseController
 
         if ($loan->getTotalPayment() >= $loan->getTotalAmount()) {
             $loan->setIsComplete(1);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($loan);
+            $entityManager->flush();
+        } else {
+            $loan->setIsComplete(0);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($loan);
             $entityManager->flush();
