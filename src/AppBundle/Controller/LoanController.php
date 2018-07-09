@@ -111,6 +111,7 @@ class LoanController extends BaseController
             ->setCellValue('M1', 'MON');
 
         $row = 3;
+        $sheet1Index = 1;
         $totalLoanAmount = 0;
         $totalTotalPayment = 0;
         $totalLastInstallmentAmount = 0;
@@ -137,14 +138,6 @@ class LoanController extends BaseController
             $totalTotalPayment += $loan->getTotalPayment();
             $totalLastInstallmentAmount += $loan->getLastInstallmentAmount();
 
-            $spreadsheet->getSheet(1)
-                ->setCellValue('A' . $row, $key + 1)
-                ->setCellValue('B' . $row, $loan->getLoanCode())
-                ->setCellValue('C' . $row, $loan->getCustomer()->getName())
-                ->setCellValue('D' . $row, $loan->getLoanAmount())
-                ->setCellValue('E' . $row, $loan->getAreasAmount())
-                ->setCellValue('F' . $row, $loan->getCustomer()->getMobile());
-
             if ($loan->getTotalPayment() >= $loan->getTotalAmount()) {
                 $loan->setIsComplete(1);
                 $entityManager = $this->getDoctrine()->getManager();
@@ -154,9 +147,18 @@ class LoanController extends BaseController
                 $spreadsheet->getSheet(0)
                     ->setCellValue('B' . $row, '~'.$loan->getLoanCode());
 
-                $spreadsheet->getSheet(1)
-                    ->setCellValue('B' . $row, '~'.$loan->getLoanCode());
+                continue;
             }
+
+            $spreadsheet->getSheet(1)
+                ->setCellValue('A' . $row, $sheet1Index)
+                ->setCellValue('B' . $row, $loan->getLoanCode())
+                ->setCellValue('C' . $row, $loan->getCustomer()->getName())
+                ->setCellValue('D' . $row, $loan->getLoanAmount())
+                ->setCellValue('E' . $row, $loan->getAreasAmount())
+                ->setCellValue('F' . $row, $loan->getCustomer()->getMobile());
+
+            $sheet1Index += 1;
         }
 
         $spreadsheet->getSheet(0)
