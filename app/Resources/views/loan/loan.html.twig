@@ -28,7 +28,7 @@
     <ul class="nav navbar-nav navbar-right">
         <li><a href="{{ path('loanAdd', {'areaId':areaId}) }}">Add Loans</a></li>
         <li><a href="{{ path('loanComplete', {'areaId':areaId}) }}">Completed Loans</a></li>
-        <li><a href="{{ path('loanPrint', {'areaId':areaId}) }}">Print</a></li>
+        <li><a href="{{ path('loanPrint', {'areaId':areaId}) }}" onclick="return confirm('Are you sure you want to print ?')">Print</a></li>
     </ul>
 
 {% endblock %}
