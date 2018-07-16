@@ -145,7 +145,7 @@ class LoanController extends BaseController
                 $entityManager->flush();
 
                 $spreadsheet->getSheet(0)
-                    ->setCellValue('B' . $row, '~'.$loan->getLoanCode());
+                    ->setCellValue('B' . $row, '~' . $loan->getLoanCode());
 
                 continue;
             }
@@ -657,7 +657,7 @@ class LoanController extends BaseController
                 $customer = new Customer();
             } else {
                 foreach ($customer->getLoans() as $loan) {
-                    if (!$loan->getIsComplete()) {
+                    if (!$loan->getIsComplete() && ($loan->getTotalPayment() < $loan->getTotalAmount())) {
                         return $this->render('loan/loanAdd.html.twig', array(
                             'areaId' => $areaId,
                             'error' => $customerName . " has an Incomplete Loan !",
