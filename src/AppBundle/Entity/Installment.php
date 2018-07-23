@@ -46,8 +46,8 @@ class Installment
 
     /**
      * Many Installments have One Loan.
-     * @ORM\ManyToOne(targetEntity="Loan", inversedBy="installments")
-     * @ORM\JoinColumn(name="loan_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Loan", inversedBy="installments", cascade={"persist"})
+     * @ORM\JoinColumn(name="loan_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $loan;
 

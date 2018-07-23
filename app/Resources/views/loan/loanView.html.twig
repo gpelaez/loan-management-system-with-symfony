@@ -14,8 +14,11 @@
     {{ parent() }}
 
     <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ path('removeLoan', {'areaId':areaId, 'loanId':loanId}) }}"
+               onclick="return confirm('Are you sure you want to delete this loan ?')">Delete Loan</a></li>
         <li><a href="{{ path('loanEdit', {'areaId':areaId, 'loanId':loanId}) }}">Edit Loan</a></li>
-        <li><a href="{{ path('viewPrint', {'areaId':areaId, 'loanId':loanId}) }}" onclick="return confirm('Are you sure you want to print ?')">Print</a></li>
+        <li><a href="{{ path('viewPrint', {'areaId':areaId, 'loanId':loanId}) }}"
+               onclick="return confirm('Are you sure you want to print ?')">Print</a></li>
     </ul>
 {% endblock %}
 
@@ -104,7 +107,8 @@
                                     <td>{{ installment.installmentAmount }}</td>
                                     <td>{{ installment.paymentDate|date('Y-m-d D') }}</td>
                                     <td><a class="btn btn-default btn-xs"
-                                           href="{{ path('removeInstallment', {'areaId':areaId, 'loanId':loanId, 'installmentId':installment.id}) }}">Remove</a>
+                                           href="{{ path('removeInstallment', {'areaId':areaId, 'loanId':loanId, 'installmentId':installment.id}) }}"
+                                           onclick="return confirm('Are you sure you want to remove this installment ?')">Remove</a>
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -284,7 +284,7 @@ class Loan
 
     /**
      * One Loan has Many Installments.
-     * @ORM\OneToMany(targetEntity="Installment", mappedBy="loan")
+     * @ORM\OneToMany(targetEntity="Installment", mappedBy="loan", cascade={"remove"}, orphanRemoval=true)
      */
     private $installments;
 

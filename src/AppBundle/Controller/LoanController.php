@@ -657,6 +657,8 @@ class LoanController extends BaseController
                 $customer = new Customer();
             } else {
                 foreach ($customer->getLoans() as $loan) {
+                    $this->updateLoanByCalculations($loan);
+
                     if (!$loan->getIsComplete() && ($loan->getTotalPayment() < $loan->getTotalAmount())) {
                         return $this->render('loan/loanAdd.html.twig', array(
                             'areaId' => $areaId,
@@ -740,6 +742,30 @@ class LoanController extends BaseController
         }
 
         return $this->render('loan/loanAdd.html.twig', array(
+            'areaId' => $areaId,
+        ));
+    }
+
+    /**
+     * @Route("/dashboard/area/{areaId}/loan/remove/{loanId}", name="removeLoan")
+     */
+    public function removeLoan(Request $request, $areaId, $loanId)
+    {
+        $loan = $this->getDoctrine()
+            ->getRepository(Loan::class)
+            ->find($loanId);
+
+        if (!$loan) {
+            throw $this->createNotFoundException(
+                'No Loan Found !'
+            );
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($loan);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('loan', array(
             'areaId' => $areaId,
         ));
     }
